@@ -6,9 +6,11 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-django = "*"
-django-environ = "*"
-psycopg2 = "*"
+django-rest-framework = "*"
+django-model-utils = "*"
+search = "*"
+results = "*"
+django-cors-headers = "*"
 
 [requires]
 python_version = "3.7"
