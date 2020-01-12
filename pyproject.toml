@@ -1,0 +1,13 @@
+[tool.poetry]
+name = "2020-server"
+version = "1.0.0"
+description = ""
+authors = ["minh minhpn.org.ec@gmail.com"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+django = "^3.0.2"
+django-environ = "^0.4.5"
+django-cors-headers = "^3.2.1"
+djangorestframework = "^3.11.0"
+psycopg2 = "^2.8.4"
