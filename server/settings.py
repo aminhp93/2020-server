@@ -112,10 +112,12 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         # 'NAME': env('DJANGO_DB_NAME'),
         'NAME': 'database_2020_server',
-        'USER': env('DJANGO_DB_USER'),
-        'PASSWORD': env('DJANGO_DB_PASSWORD'),
-        'HOST': env('DJANGO_DB_HOST', default='127.0.0.1'),
-        'PORT': env('DJANGO_DB_PORT', default='5432'),
+        'USER': 'aminhp93',
+        'PASSWORD': 'Miamikki521',
+        # 'USER': env('DJANGO_DB_USER'),
+        # 'PASSWORD': env('DJANGO_DB_PASSWORD'),
+        # 'HOST': env('DJANGO_DB_HOST', default='127.0.0.1'),
+        # 'PORT': env('DJANGO_DB_PORT', default='5432'),
     }
 }
 
