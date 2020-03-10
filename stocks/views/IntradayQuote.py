@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 
 
-class CompanyAPIView(ListAPIView):
+class IntradayQuoteAPIView(ListAPIView):
     def get(self, request, *args, **kwargs):
 
         url = "https://svr1.fireant.vn/api/Data/Companies/CompanyInfo"
@@ -19,21 +19,4 @@ class CompanyAPIView(ListAPIView):
         response = requests.request("GET", url, headers=headers, params=querystring)
         
         # print(response.text, dir(response))
-        return Response(response.json())
-
-
-class SubCompanyAPIView(ListAPIView):
-    def get(self, request, *args, **kwargs):
-
-        url = "https://svr1.fireant.vn/api/Data/Companies/SubCompanies"
-
-        querystring = {"symbol":"FPT"}
-
-        headers = {
-            'cache-control': "no-cache",
-        }
-
-        response = requests.request("GET", url, headers=headers, params=querystring)
-        
-        # print(response.json(), dir(response))
-        return Response(response.json())
+        return Response(json.loads(response.text))
