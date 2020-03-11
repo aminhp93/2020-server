@@ -16,19 +16,26 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from .view import home
-from stocks.views.Company import CompanyAPIView, SubCompanyAPIView
+from stocks.views.Company import CompanyListAPIView, SubCompanyAPIView, CompanyUpdateAPIView
 from stocks.views.HistoricalQuote import HistoricalQuoteAPIView
 from stocks.views.LatestFinancialInfo import LatestFinancialInfoAPIView
 from stocks.views.IntradayQuote import IntradayQuoteAPIView
+from rest_framework import routers
+
+router = routers.SimpleRouter(trailing_slash=False)
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
-    path('api/Data/Companies/CompanyInfo/', CompanyAPIView.as_view()),
+    path('api/Data/Companies/CompanyInfo/', CompanyListAPIView.as_view()),
+    path('api/Data/Companies/CompanyInfo/update/', CompanyUpdateAPIView.as_view()),
     path('api/Data/Companies/HistoricalQuotes/', HistoricalQuoteAPIView.as_view()),
     path('api/Data/Finance/LastestFinancialInfo/', LatestFinancialInfoAPIView.as_view()),
     path('api/Data/Companies/CompanyInfo/', IntradayQuoteAPIView.as_view()),
     path('api/Data/Companies/SubCompanies/', SubCompanyAPIView.as_view()),
     # url(r'^api-auth/', include('rest_framework.urls'))
 ]
+
+urlpatterns += router.urls
+

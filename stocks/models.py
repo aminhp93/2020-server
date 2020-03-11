@@ -1,41 +1,42 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 from model_utils.models import SoftDeletableModel, TimeStampedModel
 
 # Create your models here.
 class Company(SoftDeletableModel, TimeStampedModel):
     Symbol = models.CharField(_('ICBCode'), max_length=255, blank=True) # "FPT"
-    ICBCode = models.CharField(_('ICBCode'), max_length=255, blank=True) # "9537"
-    CompanyName = models.CharField(_('CompanyName'), max_length=255, blank=True) # "CTCP FPT"
-    ShortName = models.CharField(_('ShortName'), max_length=255, blank=True) # "FPT Corp"
-    InternationalName = models.CharField(_('InternationalName'), max_length=255, blank=True) # "FPT Corporation"
-    HeadQuarters = models.CharField(_('HeadQuarters'), max_length=255, blank=True) # "Số 17, Phố Duy Tân, Phường Dịch vọng Hậu, Quận C..."
-    Phone = models.CharField(_('Phone'), max_length=255, blank=True) # "+84 (24) 730-07300"
-    Fax = models.CharField(_('Fax'), max_length=255, blank=True) # "+84 (24) 376-87410"
-    Email = models.CharField(_('Email'), max_length=255, blank=True) # null
-    WebAddress = models.CharField(_('WebAddress'), max_length=255, blank=True) # "www.fpt.com.vn"
-    Overview = models.TextField(_('Overview'), blank=True) # "Nhiều năm gần đây, Công ty FPT được bình chọn là Công ty tin họ"
-    History = models.TextField(_('History'), blank=True) # "<div>↵<ul>↵	<li>Ngày 13/9/1988, thành lập Công"
-    BusinessAreas = models.TextField(_('BusinessAreas'), blank=True) # ""<ul>↵	<li style="text-align:justify"><span style="font-size:12px">Xây "
-    Employees = models.CharField(_('Employees'), max_length=255, blank=True) # 11556
-    Branches = models.CharField(_('Branches'), max_length=255, blank=True) # 17
-    EstablishmentDate = models.CharField(_('EstablishmentDate'), max_length=255, blank=True) # "1988-09-13T00:00:00"
-    BusinessLicenseNumber = models.CharField(_('BusinessLicenseNumber'), max_length=255, blank=True) # "0101248141 "
-    DateOfIssue = models.CharField(_('DateOfIssue'), max_length=255, blank=True) # "2019-06-11T00:00:00"
-    TaxIDNumber = models.CharField(_('TaxIDNumber'), max_length=255, blank=True) # "0101248141"
-    CharterCapital = models.CharField(_('CharterCapital'), max_length=255, blank=True) # 6783586880000
-    DateOfListing = models.CharField(_('DateOfListing'), max_length=255, blank=True) # "2006-11-21T00:00:00"
-    Exchange = models.CharField(_('Exchange'), max_length=255, blank=True) # "HSX"
-    InitialListingPrice = models.CharField(_('InitialListingPrice'), max_length=255, blank=True) # 400000
-    ListingVolume = models.CharField(_('ListingVolume'), max_length=255, blank=True) # 678358688
-    StateOwnership = models.CharField(_('StateOwnership'), max_length=255, blank=True) # 0.0596
-    ForeignOwnership = models.CharField(_('ForeignOwnership'), max_length=255, blank=True) # 0.489999988206829
-    OtherOwnership = models.CharField(_('OtherOwnership'), max_length=255, blank=True) # 0.450400011793171
-    IsListed = models.CharField(_('IsListed'), max_length=255, blank=True) # true
+    ICBCode = models.CharField(_('ICBCode'), max_length=255, blank=True, null=True) # "9537"
+    CompanyName = models.CharField(_('CompanyName'), max_length=255, blank=True, null=True) # "CTCP FPT"
+    ShortName = models.CharField(_('ShortName'), max_length=255, blank=True, null=True) # "FPT Corp"
+    InternationalName = models.CharField(_('InternationalName'), max_length=255, blank=True, null=True) # "FPT Corporation"
+    HeadQuarters = models.CharField(_('HeadQuarters'), max_length=255, blank=True, null=True) # "Số 17, Phố Duy Tân, Phường Dịch vọng Hậu, Quận C..."
+    Phone = models.CharField(_('Phone'), max_length=255, blank=True, null=True) # "+84 (24) 730-07300"
+    Fax = models.CharField(_('Fax'), max_length=255, blank=True, null=True) # "+84 (24) 376-87410"
+    Email = models.CharField(_('Email'), max_length=255, blank=True, null=True) # null
+    WebAddress = models.CharField(_('WebAddress'), max_length=255, blank=True, null=True) # "www.fpt.com.vn"
+    Overview = models.TextField(_('Overview'), blank=True, null=True) # "Nhiều năm gần đây, Công ty FPT được bình chọn là Công ty tin họ"
+    History = models.TextField(_('History'), blank=True, null=True) # "<div>↵<ul>↵	<li>Ngày 13/9/1988, thành lập Công"
+    BusinessAreas = models.TextField(_('BusinessAreas'), blank=True, null=True) # ""<ul>↵	<li style="text-align:justify"><span style="font-size:12px">Xây "
+    Employees = models.CharField(_('Employees'), max_length=255, blank=True, null=True) # 11556
+    Branches = models.CharField(_('Branches'), max_length=255, blank=True, null=True) # 17
+    EstablishmentDate = models.CharField(_('EstablishmentDate'), max_length=255, blank=True, null=True) # "1988-09-13T00:00:00"
+    BusinessLicenseNumber = models.CharField(_('BusinessLicenseNumber'), max_length=255, blank=True, null=True) # "0101248141 "
+    DateOfIssue = models.CharField(_('DateOfIssue'), max_length=255, blank=True, null=True) # "2019-06-11T00:00:00"
+    TaxIDNumber = models.CharField(_('TaxIDNumber'), max_length=255, blank=True, null=True) # "0101248141"
+    CharterCapital = models.CharField(_('CharterCapital'), max_length=255, blank=True, null=True) # 6783586880000
+    DateOfListing = models.CharField(_('DateOfListing'), max_length=255, blank=True, null=True) # "2006-11-21T00:00:00"
+    Exchange = models.CharField(_('Exchange'), max_length=255, blank=True, null=True) # "HSX"
+    InitialListingPrice = models.CharField(_('InitialListingPrice'), max_length=255, blank=True, null=True) # 400000
+    ListingVolume = models.CharField(_('ListingVolume'), max_length=255, blank=True, null=True) # 678358688
+    StateOwnership = models.CharField(_('StateOwnership'), max_length=255, blank=True, null=True) # 0.0596
+    ForeignOwnership = models.CharField(_('ForeignOwnership'), max_length=255, blank=True, null=True) # 0.489999988206829
+    OtherOwnership = models.CharField(_('OtherOwnership'), max_length=255, blank=True, null=True) # 0.450400011793171
+    IsListed = models.BooleanField(_('IsListed'), default=False) # true
 
     class Meta:
         ordering = ('-created', '-id',)
         verbose_name = _('Company')
-        verbosee_name_plural = _('Companies')
+        verbose_name_plural = _('Companies')
 
     def __str__(self):
         return self.get_InternationalName
@@ -46,7 +47,7 @@ class Company(SoftDeletableModel, TimeStampedModel):
 
 
 class LatestFinancialInfo(SoftDeletableModel, TimeStampedModel):
-    Symbol = models.CharField(_('Symbol'), max_length=255, blank=True) # "AAV"
+    Symbol = models.CharField(_('Symbol'), max_length=255, blank=True, unique=True) # "AAV"
     LFY = models.CharField(_('LFY'), max_length=255, blank=True) # 2019
     Year = models.CharField(_('Year'), max_length=255, blank=True) # 2019
     Quarter = models.CharField(_('Quarter'), max_length=255, blank=True) # 4
@@ -185,7 +186,7 @@ class LatestFinancialInfo(SoftDeletableModel, TimeStampedModel):
     class Meta:
         ordering = ('-created', '-id',)
         verbose_name = _('LatestFinancialInfo')
-        verbosee_name_plural = _('LatestFinancialInfo')
+        verbose_name_plural = _('LatestFinancialInfo')
 
     def __str__(self):
         return 'LatestFinancialInfo-{}-{}'.format(self.Symbol, self.Date)
@@ -202,7 +203,7 @@ class IntradayQuote(SoftDeletableModel, TimeStampedModel):
     class Meta:
         ordering = ('-created', '-id',)
         verbose_name = _('IntradayQuote')
-        verbosee_name_plural = _('IntradayQuotes')
+        verbose_name_plural = _('IntradayQuotes')
 
     def __str__(self):
         return 'IntradayQuote-{}-{}'.format(self.Symbol, self.Date)
@@ -222,7 +223,7 @@ class HistoricalQuote(SoftDeletableModel, TimeStampedModel):
     class Meta:
         ordering = ('-created', '-id',)
         verbose_name = _('HistoricalQuote')
-        verbosee_name_plural = _('HistoricalQuotes')
+        verbose_name_plural = _('HistoricalQuotes')
 
     def __str__(self):
         return 'HistoricalQuote-{}-{}'.format(self.Symbol, self.Date)
