@@ -1,22 +1,24 @@
 import json
 import requests
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, RetrieveAPIView, DestroyAPIView
 from rest_framework.response import Response
-from django.http import JsonResponse
+from rest_framework import status
+
 from stocks.serializers import CompanySerializer
 from stocks.models import Company
-from django.shortcuts import get_object_or_404
-from rest_framework import status
 
 
 class CompanyListAPIView(RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         Symbol = request.GET.get('symbol')
         result = Company.objects.filter(Symbol=Symbol)
-        if result.count() == 0:
+        if result.count() != 1:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
         serializer = CompanySerializer(result[0])
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class CompanyUpdateAPIView(UpdateAPIView):
     serializer_class = CompanySerializer
@@ -39,7 +41,7 @@ class CompanyUpdateAPIView(UpdateAPIView):
         
         
         count = Company.objects.filter(Symbol=Symbol).count()
-        if count == 0:
+        if count != 1:
             serializer = CompanySerializer(data=response.json())    
             if not serializer.is_valid():
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
