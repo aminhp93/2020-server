@@ -9,7 +9,7 @@ class Stock(TimeStampedModel):
 
 
 class Company(TimeStampedModel):
-    Symbol = models.CharField(_('ICBCode'), max_length=255, blank=True) # "FPT"
+    Symbol = models.CharField(_('ICBCode'), max_length=255, blank=True, unique=True, null=False) # "FPT"
     ICBCode = models.CharField(_('ICBCode'), max_length=255, blank=True, null=True) # "9537"
     CompanyName = models.CharField(_('CompanyName'), max_length=255, blank=True, null=True) # "CTCP FPT"
     ShortName = models.CharField(_('ShortName'), max_length=255, blank=True, null=True) # "FPT Corp"
@@ -52,7 +52,7 @@ class Company(TimeStampedModel):
 
 
 class LatestFinancialInfo(TimeStampedModel):
-    Symbol = models.CharField(_('Symbol'), max_length=255, blank=True, unique=True, null=True) # "AAV"
+    Symbol = models.CharField(_('Symbol'), max_length=255, blank=True, unique=True, null=False) # "AAV"
     LFY = models.CharField(_('LFY'), max_length=255, blank=True, null=True) # 2019
     Year = models.CharField(_('Year'), max_length=255, blank=True, null=True) # 2019
     Quarter = models.CharField(_('Quarter'), max_length=255, blank=True, null=True) # 4
@@ -198,7 +198,7 @@ class LatestFinancialInfo(TimeStampedModel):
 
 
 class IntradayQuote(TimeStampedModel):
-    Symbol = models.CharField(_('Symbol'), max_length=255, blank=True) # "AAV"
+    Symbol = models.CharField(_('Symbol'), max_length=255, blank=True, unique=True, null=False) # "AAV"
     Date = models.CharField(_('Date'), max_length=255, blank=True) # "2020-03-02T02:06:28.88Z"
     Price = models.CharField(_('Price'), max_length=255, blank=True) # 6700
     Volume = models.CharField(_('Volume'), max_length=255, blank=True) # 3400
@@ -215,7 +215,7 @@ class IntradayQuote(TimeStampedModel):
 
 
 class HistoricalQuote(TimeStampedModel):
-    Symbol = models.CharField(_('Symbol'), max_length=255, blank=True) # "AAV"
+    Symbol = models.CharField(_('Symbol'), max_length=255, blank=True, unique=True, null=False) # "AAV"
     Close = models.CharField(_('Close'), max_length=255, blank=True) # 8600
     Open = models.CharField(_('Open'), max_length=255, blank=True) # 8300
     High = models.CharField(_('High'), max_length=255, blank=True) # 8600

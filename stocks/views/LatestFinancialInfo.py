@@ -63,5 +63,5 @@ class LatestFinancialInfoUpdateAPIView(UpdateAPIView):
         serializer = LatestFinancialInfoSerializer(data=response.json())
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        created_financial_info = serializer.save()
+        serializer.save()
         return Response(serializer.data, status = status.HTTP_201_CREATED)
