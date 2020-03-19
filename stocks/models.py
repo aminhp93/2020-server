@@ -72,7 +72,8 @@ class SubCompany(TimeStampedModel):
         verbose_name_plural = _('SubCompanies')
 
     def __str__(self):
-        return 'SubCompany-{}-{}'.format(self.Symbol, self.Date)
+        return 'SubCompany-{}-{}'.format(self.Stock_id, self.Date)
+
 
 class LatestFinancialInfo(TimeStampedModel):
     Symbol = models.CharField(_('Symbol'), max_length=255, blank=True, unique=True, null=False) # "AAV"
@@ -255,3 +256,48 @@ class HistoricalQuote(TimeStampedModel):
 
     def __str__(self):
         return 'HistoricalQuote-{}-{}'.format(self.Symbol, self.Date)
+
+
+class CompanyOfficer(TimeStampedModel):
+    Stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None, related_name='stock_companyofficer')
+    OfficerID = models.CharField(_('OfficerID'), max_length=255, blank=True)
+    IndividualID = models.CharField(_('IndividualID'), max_length=255, blank=True)
+    Name = models.CharField(_('Name'), max_length=255, blank=True)
+    PositionID = models.CharField(_('PositionID'), max_length=255, blank=True)
+    Position = models.CharField(_('Position'), max_length=255, blank=True)
+    IsForeigner = models.BooleanField(_('IsForeigner'), default=False) # true
+
+    class Meta:
+        ordering = ('-created', '-id',)
+        verbose_name = _('CompanyOfficer')
+        verbose_name_plural = _('CompanyOfficers')
+
+    def __str__(self):
+        return 'CompanyOfficer-{}-{}'.format(self.Stock_id, self.Date)
+
+
+class CompanyTransaction(TimeStampedModel):
+    Stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None, related_name='stock_companytransaction')
+    TransactionID = models.CharField(_('TransactionID'), max_length=255, blank=True, null=True)
+    MajorHolderID = models.CharField(_('MajorHolderID'), max_length=255, blank=True, null=True)
+    IndividualHolderID = models.CharField(_('IndividualHolderID'), max_length=255, blank=True, null=True)
+    InstitutionHolderID = models.CharField(_('InstitutionHolderID'), max_length=255, blank=True, null=True)
+    InstitutionHolderSymbol = models.CharField(_('InstitutionHolderSymbol'), max_length=255, blank=True, null=True)
+    InstitutionHolderExchange = models.CharField(_('InstitutionHolderExchange'), max_length=255, blank=True, null=True)
+    Name = models.CharField(_('Name'), max_length=255, blank=True, null=True)
+    Position = models.CharField(_('Position'), max_length=255, blank=True, null=True)
+    Symbol = models.CharField(_('Symbol'), max_length=255, blank=True, null=True)
+    Type = models.CharField(_('Type'), max_length=255, blank=True, null=True)
+    ExecutionVolume = models.CharField(_('ExecutionVolume'), max_length=255, blank=True, null=True)
+    ExecutionDate = models.CharField(_('ExecutionDate'), max_length=255, blank=True, null=True)
+    StartDate = models.CharField(_('StartDate'), max_length=255, blank=True, null=True)
+    EndDate = models.CharField(_('EndDate'), max_length=255, blank=True, null=True)
+    RegisteredVolume = models.CharField(_('RegisteredVolume'), max_length=255, blank=True, null=True)
+
+    class Meta:
+        ordering = ('-created', '-id',)
+        verbose_name = _('CompanyTransaction')
+        verbose_name_plural = _('CompanyTransactions')
+
+    def __str__(self):
+        return 'CompanyTransaction-{}-{}'.format(self.Stock_id, self.Date)

@@ -17,7 +17,16 @@ from django.contrib import admin
 from django.urls import path
 from .view import home
 from stocks.views.Stock import StockAPIView
-from stocks.views.Company import CompanyListAPIView, SubCompanyAPIView, CompanyUpdateAPIView, SubCompanyUpdateAPIView
+from stocks.views.Company import (
+    CompanyListAPIView,
+    CompanyUpdateAPIView,
+    SubCompanyAPIView,
+    SubCompanyUpdateAPIView,
+    CompanyOfficerAPIView,
+    CompanyOfficerUpdateAPIView,
+    CompanyTransactionsAPIView,
+    CompanyTransactionsUpdateAPIView
+)
 from stocks.views.HistoricalQuote import HistoricalQuoteAPIView
 from stocks.views.LatestFinancialInfo import LatestFinancialInfoRetrieveAPIView, LatestFinancialInfoUpdateAPIView
 from stocks.views.IntradayQuote import IntradayQuoteAPIView
@@ -34,14 +43,18 @@ urlpatterns = [
     # 
     path('api/Data/Companies/CompanyInfo/', CompanyListAPIView.as_view()),
     path('api/Data/Companies/CompanyInfo/update/', CompanyUpdateAPIView.as_view()),
-    path('api/Data/Companies/HistoricalQuotes/', HistoricalQuoteAPIView.as_view()),
+    path('api/Data/Companies/SubCompanies/', SubCompanyAPIView.as_view()),
     path('api/Data/Companies/SubCompanies/update/', SubCompanyUpdateAPIView.as_view()),
+    path('api/Data/Companies/CompanyOfficers/', CompanyOfficerAPIView.as_view()),
+    path('api/Data/Companies/CompanyOfficers/update/', CompanyOfficerUpdateAPIView.as_view()),
+    path('api/Data/Companies/CompanyTransactions/', CompanyTransactionsAPIView.as_view()),
+    path('api/Data/Companies/CompanyTransactions/update/', CompanyTransactionsUpdateAPIView.as_view()),
     # 
     path('api/Data/Finance/LastestFinancialInfo/', LatestFinancialInfoRetrieveAPIView.as_view()),
     path('api/Data/Finance/LastestFinancialInfo/update/', LatestFinancialInfoUpdateAPIView.as_view()),
     # 
-    path('api/Data/Companies/CompanyInfo/', IntradayQuoteAPIView.as_view()),
-    path('api/Data/Companies/SubCompanies/', SubCompanyAPIView.as_view()),
+    # path('api/Data/Companies/HistoricalQuotes/', HistoricalQuoteAPIView.as_view()),
+    # path('api/Data/Companies/CompanyInfo/', IntradayQuoteAPIView.as_view()),
     # url(r'^api-auth/', include('rest_framework.urls'))
 ]
 
