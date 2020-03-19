@@ -51,6 +51,29 @@ class Company(TimeStampedModel):
         return self.InternationalName
 
 
+class SubCompany(TimeStampedModel):
+    Stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None, related_name='stock_subcompany')
+    Symbol = models.CharField(_('Symbol'), max_length=255, blank=True, null=True)
+    InstitutionID = models.CharField(_('InstitutionID'), max_length=255, blank=True, null=True)
+    Exchange = models.CharField(_('Exchange'), max_length=255, blank=True, null=True)
+    CompanyName = models.CharField(_('CompanyName'), max_length=255, blank=True, null=True)
+    ShortName = models.CharField(_('ShortName'), max_length=255, blank=True, null=True)
+    InternationalName = models.CharField(_('InternationalName'), max_length=255, blank=True, null=True)
+    CompanyProfile = models.TextField(_('CompanyProfile'), blank=True, null=True)
+    Type = models.CharField(_('Type'), max_length=255, blank=True, null=True)
+    Ownership = models.CharField(_('Ownership'), max_length=255, blank=True, null=True)
+    Shares = models.CharField(_('Shares'), max_length=255, blank=True, null=True)
+    IsListed = models.BooleanField(_('IsListed'), default=False) # true
+    CharterCapital = models.CharField(_('CharterCapital'), max_length=255, blank=True, null=True)
+
+    class Meta:
+        ordering = ('-created', '-id',)
+        verbose_name = _('SubCompany')
+        verbose_name_plural = _('SubCompanies')
+
+    def __str__(self):
+        return 'SubCompany-{}-{}'.format(self.Symbol, self.Date)
+
 class LatestFinancialInfo(TimeStampedModel):
     Symbol = models.CharField(_('Symbol'), max_length=255, blank=True, unique=True, null=False) # "AAV"
     LFY = models.CharField(_('LFY'), max_length=255, blank=True, null=True) # 2019

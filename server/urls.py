@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from .view import home
 from stocks.views.Stock import StockAPIView
-from stocks.views.Company import CompanyListAPIView, SubCompanyAPIView, CompanyUpdateAPIView
+from stocks.views.Company import CompanyListAPIView, SubCompanyAPIView, CompanyUpdateAPIView, SubCompanyUpdateAPIView
 from stocks.views.HistoricalQuote import HistoricalQuoteAPIView
 from stocks.views.LatestFinancialInfo import LatestFinancialInfoRetrieveAPIView, LatestFinancialInfoUpdateAPIView
 from stocks.views.IntradayQuote import IntradayQuoteAPIView
@@ -35,6 +35,7 @@ urlpatterns = [
     path('api/Data/Companies/CompanyInfo/', CompanyListAPIView.as_view()),
     path('api/Data/Companies/CompanyInfo/update/', CompanyUpdateAPIView.as_view()),
     path('api/Data/Companies/HistoricalQuotes/', HistoricalQuoteAPIView.as_view()),
+    path('api/Data/Companies/SubCompanies/update/', SubCompanyUpdateAPIView.as_view()),
     # 
     path('api/Data/Finance/LastestFinancialInfo/', LatestFinancialInfoRetrieveAPIView.as_view()),
     path('api/Data/Finance/LastestFinancialInfo/update/', LatestFinancialInfoUpdateAPIView.as_view()),
