@@ -7,7 +7,8 @@ from stocks.models import (
     LatestFinancialInfo,
     CompanyOfficer,
     CompanyTransaction,
-    YearlyFinancialInfo
+    YearlyFinancialInfo,
+    QuarterlyFinancialInfo
 )
 
 
@@ -53,5 +54,12 @@ class LatestFinancialInfoSerializer(serializers.ModelSerializer):
 class YearlyFinancialInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = YearlyFinancialInfo
+        # fields = '__all__'
+        exclude = ['Stock']
+
+
+class QuarterlyFinancialInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuarterlyFinancialInfo
         # fields = '__all__'
         exclude = ['Stock']
