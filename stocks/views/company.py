@@ -19,9 +19,9 @@ from stocks.serializers import (
     CompanyTransactionSerializer
 )
 from stocks.models import (
+    Stock,
     Company,
     SubCompany,
-    Stock,
     CompanyOfficer,
     CompanyTransaction
 )

@@ -28,7 +28,12 @@ from stocks.views.Company import (
     CompanyTransactionsUpdateAPIView
 )
 from stocks.views.HistoricalQuote import HistoricalQuoteAPIView
-from stocks.views.LatestFinancialInfo import LatestFinancialInfoRetrieveAPIView, LatestFinancialInfoUpdateAPIView
+from stocks.views.Finance import (
+    LatestFinancialInfoRetrieveAPIView,
+    LatestFinancialInfoUpdateAPIView,
+    YearlyFinancialInfoRetrieveAPIView,
+    YearlyFinancialInfoUpdateAPIView
+)
 from stocks.views.IntradayQuote import IntradayQuoteAPIView
 from rest_framework import routers
 
@@ -52,6 +57,9 @@ urlpatterns = [
     # 
     path('api/Data/Finance/LastestFinancialInfo/', LatestFinancialInfoRetrieveAPIView.as_view()),
     path('api/Data/Finance/LastestFinancialInfo/update/', LatestFinancialInfoUpdateAPIView.as_view()),
+    path('api/Data/Finance/YearlyFinancialInfo/', YearlyFinancialInfoRetrieveAPIView.as_view()),
+    path('api/Data/Finance/YearlyFinancialInfo/update/', YearlyFinancialInfoUpdateAPIView.as_view()),
+    # path('test/', YearlyFinancialInfoUpdateAPIView.as_view()),
     # 
     # path('api/Data/Companies/HistoricalQuotes/', HistoricalQuoteAPIView.as_view()),
     # path('api/Data/Companies/CompanyInfo/', IntradayQuoteAPIView.as_view()),
