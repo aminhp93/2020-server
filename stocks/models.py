@@ -2,7 +2,9 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from model_utils.models import SoftDeletableModel, TimeStampedModel
 
-# Create your models here.
+from .constants import LastestFinancialReports
+
+
 class Stock(TimeStampedModel):
     Symbol = models.CharField(_('Symbol'), max_length=255, blank=True, unique=True, null=False)
     Exchange = models.CharField(_('Exchange'), max_length=255, blank=True, null=False)
@@ -432,3 +434,30 @@ class QuarterlyFinancialInfo(TimeStampedModel):
 
     def __str__(self):
         return 'QuarterlyFinancialInfo-{}-{}'.format(self.Stock_id, self.Date)
+
+
+class LastestFinancialReportsName(TimeStampedModel):
+    TYPE_CHOICES = [
+        (LastestFinancialReports.KQKD, '2'),
+        (LastestFinancialReports.CDKT, '1'),
+        (LastestFinancialReports.LCTT_TT, '3'),
+        (LastestFinancialReports.LCTT_GT, '4'),
+    ]
+
+    Type = models.CharField(_('Type'), max_length=1, blank=False, null=False,
+                            choices=TYPE_CHOICES, default=LastestFinancialReports.KQKD)
+    ID = models.FloatField(_('ID'), blank=True, null=True)
+    Name = models.CharField(_('Name'), max_length=255, blank=True, null=True)
+    ParentID = models.FloatField(_('ParentID'), blank=True, null=True)
+    Expanded = models.BooleanField(_('Expanded'), default=False) # true
+    Level = models.FloatField(_('Level'), blank=True, null=True)
+    Field = models.CharField(_('Field'), max_length=255, blank=True, null=True)
+
+
+class LastestFinancialReportsValue(TimeStampedModel):
+    Stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None, related_name='LastestFinancialReportsValue_Stock')
+    Name = models.ForeignKey(LastestFinancialReportsName, on_delete=models.CASCADE, default=None, related_name='LastestFinancialReportsValue_Name')
+    Period = models.CharField(_('Period'), max_length=255, blank=True, null=True)
+    Year = models.FloatField(_('Year'), blank=True, null=True)
+    Quarter = models.FloatField(_('Quarter'), blank=True, null=True)
+    Value = models.FloatField(_('Value'), blank=True, null=True)
