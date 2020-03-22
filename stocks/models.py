@@ -456,7 +456,7 @@ class LastestFinancialReportsName(TimeStampedModel):
 
 class LastestFinancialReportsValue(TimeStampedModel):
     Stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None, related_name='LastestFinancialReportsValue_Stock')
-    Name = models.ForeignKey(LastestFinancialReportsName, on_delete=models.CASCADE, default=None, related_name='LastestFinancialReportsValue_Name')
+    ID = models.FloatField(_('ID'), blank=True, null=True)
     Period = models.CharField(_('Period'), max_length=255, blank=True, null=True)
     Year = models.FloatField(_('Year'), blank=True, null=True)
     Quarter = models.FloatField(_('Quarter'), blank=True, null=True)

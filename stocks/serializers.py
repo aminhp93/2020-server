@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import serializers
 
 from stocks.models import (
@@ -72,3 +73,28 @@ class LastestFinancialReportsValueSerializer(serializers.ModelSerializer):
     class Meta:
         model = LastestFinancialReportsValue
         exclude = ['Stock']
+
+
+class LastestFinancialReportsSerializer(serializers.ModelSerializer):
+    Values = serializers.SerializerMethodField()
+
+    def get_Values(self, obj):
+        year = self.context.get('year')
+        quarter = self.context.get('quarter')
+        if year and quarter:
+            query = LastestFinancialReportsValue.objects.filter(Q(ID=obj.ID))
+            return LastestFinancialReportsValueSerializer(query, many=True).data
+        return None
+
+    class Meta:
+        model = LastestFinancialReportsName
+
+        fields = (
+            'ID',
+            'Name',
+            'ParentID',
+            'Expanded',
+            'Level',
+            'Field',
+            'Values'
+        )

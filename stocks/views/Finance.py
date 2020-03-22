@@ -1,6 +1,7 @@
 import json
 import requests
 from django.http import JsonResponse
+from django.db.models import Q
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,6 +10,7 @@ from stocks.serializers import (
     LatestFinancialInfoSerializer,
     YearlyFinancialInfoSerializer,
     QuarterlyFinancialInfoSerializer,
+    LastestFinancialReportsSerializer,
     LastestFinancialReportsNameSerializer,
     LastestFinancialReportsValueSerializer
 )
@@ -20,6 +22,17 @@ from stocks.models import (
     LastestFinancialReportsName,
     LastestFinancialReportsValue
 )
+
+def mapData(data):
+    result = []
+    for item in data:
+        for valuesItem in item['Values']:
+            valuesItem['ID'] = item['ID']
+            result.append(valuesItem)
+    return result
+
+def mapDataLastestFinancialReportsName(data):
+    return data
 
 
 class LatestFinancialInfoRetrieveAPIView(RetrieveAPIView):
@@ -174,38 +187,21 @@ class QuarterlyFinancialInfoUpdateAPIView(UpdateAPIView):
 class LastestFinancialReportsRetrieveAPIView(RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         Symbol = request.GET.get('symbol')
-        if not Symbol:
+        type = request.GET.get('type')
+        year = request.GET.get('year')
+        quarter = request.GET.get('quarter')
+        count = request.GET.get('count')
+        filterStocks = Stock.objects.filter(Symbol=Symbol)
+        if filterStocks.count() != 1:
+            return Response(None, status=status.HTTP_404_NOT_FOUND)
+        result = LastestFinancialReportsName.objects.filter(Type=type)
+        query = LastestFinancialReportsValue.objects.filter(Stock_id=filterStocks[0].id)
+
+        if result.count() == 0:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
-        url = "https://svr1.fireant.vn/api/Data/Finance/LastestFinancialReports"
 
-        querystring = {
-            "symbol": Symbol,
-            "type": "2",
-            "year": "2020",
-            "quarter": "0",
-            "count": "5"
-        }
-
-        headers = {
-            'cache-control': "no-cache",
-        }
-
-        response = requests.request("GET", url, headers=headers, params=querystring)
-        
-        data = response.json()
-        return Response(data)
-        # Symbol = request.GET.get('symbol')
-        # # Miss api to handle fromYear && toYear
-        # fromYear = request.GET.get('fromYear')
-        # toYear = request.GET.get('toYear')
-        # filterStocks = Stock.objects.filter(Symbol=Symbol)
-        # if filterStocks.count() != 1:
-        #     return Response(None, status=status.HTTP_404_NOT_FOUND)
-        # result = LastestFinancialReports.objects.filter(Stock_id=filterStocks[0].id)
-        # if result.count() == 0:
-        #     return Response(None, status=status.HTTP_404_NOT_FOUND)
-        # serializer = LastestFinancialReportsSerializer(result, many=True)
-        # return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = LastestFinancialReportsSerializer(result, context={'year': year, 'quarter': quarter}, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class LastestFinancialReportsNameUpdateAPIView(UpdateAPIView):
@@ -239,7 +235,7 @@ class LastestFinancialReportsNameUpdateAPIView(UpdateAPIView):
         data = response.json()
 
         LastestFinancialReportsName.objects.filter(Type=type).delete()
-        # 
+        
         serializer = LastestFinancialReportsNameSerializer(data=data, many=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -248,23 +244,26 @@ class LastestFinancialReportsNameUpdateAPIView(UpdateAPIView):
         return Response(serializer.data, status = status.HTTP_201_CREATED)
 
 
-
 class LastestFinancialReportsValueUpdateAPIView(UpdateAPIView):
     def get_queryset(self):
         return LastestFinancialReports.objects.all()
 
     def put(self, request, *args, **kwargs):
         Symbol = request.GET.get('symbol')
-        if not Symbol:
+        type = request.GET.get('type')
+        year = request.GET.get('year')
+        quarter = request.GET.get('quarter')
+        count = request.GET.get('count')
+        if not Symbol or not type or not year or not quarter or not count:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
         url = "https://svr1.fireant.vn/api/Data/Finance/LastestFinancialReports"
 
         querystring = {
             "symbol": Symbol,
-            "type": "2",
-            "year": "2020",
-            "quarter": "0",
-            "count": "5"
+            "type": type,
+            "year": year,
+            "quarter": quarter,
+            "count": count
         }
 
         headers = {
@@ -277,12 +276,24 @@ class LastestFinancialReportsValueUpdateAPIView(UpdateAPIView):
 
         filteredStock = Stock.objects.filter(Symbol=Symbol)
         if filteredStock.count() != 1:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
-        # Delete all data with Symbol
-        LastestFinancialReports.objects.filter(Stock_id=filteredStock[0].id).delete()
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+        
+        # filteredLastestFinancialReportsName = LastestFinancialReportsName.objects.filter(
+        #     =ID)
+        # if filteredLastestFinancialReportsName.count() != 1:
+        #     return Response({}, status=status.HTTP_404_NOT_FOUND)
 
-        # 
-        serializer = LastestFinancialReportsSerializer(data=data, many=True)
+        # LastestFinancialReportsValue.objects.filter(
+        #     Q(Stock_id=filteredStock[0].id) & 
+        #     Q(Name_id=filteredLastestFinancialReportsName[0].id)
+        # ).delete()
+        # DONE REMOVE OLD VALUES
+        
+        # print(data)
+        mappedData = mapData(data)
+
+
+        serializer = LastestFinancialReportsValueSerializer(data=mappedData, many=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
