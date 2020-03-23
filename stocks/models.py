@@ -455,6 +455,15 @@ class LastestFinancialReportsName(TimeStampedModel):
 
 
 class LastestFinancialReportsValue(TimeStampedModel):
+    TYPE_CHOICES = [
+        (LastestFinancialReports.KQKD, '2'),
+        (LastestFinancialReports.CDKT, '1'),
+        (LastestFinancialReports.LCTT_TT, '3'),
+        (LastestFinancialReports.LCTT_GT, '4'),
+    ]
+
+    Type = models.CharField(_('Type'), max_length=1, blank=False, null=False,
+                            choices=TYPE_CHOICES, default=LastestFinancialReports.KQKD)
     Stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None, related_name='LastestFinancialReportsValue_Stock')
     ID = models.FloatField(_('ID'), blank=True, null=True)
     Period = models.CharField(_('Period'), max_length=255, blank=True, null=True)

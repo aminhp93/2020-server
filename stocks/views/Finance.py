@@ -23,11 +23,12 @@ from stocks.models import (
     LastestFinancialReportsValue
 )
 
-def mapData(data):
+def mapData(data, type):
     result = []
     for item in data:
         for valuesItem in item['Values']:
             valuesItem['ID'] = item['ID']
+            valuesItem['Type'] = type
             result.append(valuesItem)
     return result
 
@@ -199,8 +200,8 @@ class LastestFinancialReportsRetrieveAPIView(RetrieveAPIView):
 
         if result.count() == 0:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = LastestFinancialReportsSerializer(result, context={'year': year, 'quarter': quarter}, many=True)
+        print(203, type)
+        serializer = LastestFinancialReportsSerializer(result, context={'year': year, 'quarter': quarter, 'type': type}, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -274,23 +275,14 @@ class LastestFinancialReportsValueUpdateAPIView(UpdateAPIView):
         
         data = response.json()
 
+        if not data:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
         filteredStock = Stock.objects.filter(Symbol=Symbol)
         if filteredStock.count() != 1:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
         
-        # filteredLastestFinancialReportsName = LastestFinancialReportsName.objects.filter(
-        #     =ID)
-        # if filteredLastestFinancialReportsName.count() != 1:
-        #     return Response({}, status=status.HTTP_404_NOT_FOUND)
-
-        # LastestFinancialReportsValue.objects.filter(
-        #     Q(Stock_id=filteredStock[0].id) & 
-        #     Q(Name_id=filteredLastestFinancialReportsName[0].id)
-        # ).delete()
-        # DONE REMOVE OLD VALUES
-        
-        # print(data)
-        mappedData = mapData(data)
+        mappedData = mapData(data, type)
 
 
         serializer = LastestFinancialReportsValueSerializer(data=mappedData, many=True)
