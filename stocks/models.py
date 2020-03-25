@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from model_utils.models import SoftDeletableModel, TimeStampedModel
 
-from .constants import LastestFinancialReports
+from .constants import LastestFinancialReports, IndustryTypeConstant
 
 
 class Stock(TimeStampedModel):
@@ -452,6 +452,15 @@ class LastestFinancialReportsName(TimeStampedModel):
     Expanded = models.BooleanField(_('Expanded'), default=False) # true
     Level = models.FloatField(_('Level'), blank=True, null=True)
     Field = models.CharField(_('Field'), max_length=255, blank=True, null=True)
+    INDUSTRY_CHOICES = [
+        (IndustryTypeConstant.DEFAULT, '1'),
+        (IndustryTypeConstant.NGAN_HANG, '2'),
+        (IndustryTypeConstant.BAO_HIEM, '3'),
+        (IndustryTypeConstant.CHUNG_KHOAN, '4'),
+        (IndustryTypeConstant.QUY, '5'),
+    ]
+    IndustryType = models.CharField(_('IndustryType'), max_length=1, blank=False, null=False,
+                            choices=INDUSTRY_CHOICES, default=IndustryTypeConstant.DEFAULT)
 
 
 class LastestFinancialReportsValue(TimeStampedModel):

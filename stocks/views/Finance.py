@@ -23,6 +23,9 @@ from stocks.models import (
     LastestFinancialReportsValue
 )
 
+from stocks.constants import IndustryTypeListStock, IndustryTypeConstant
+
+
 def mapData(data, type):
     result = []
     for item in data:
@@ -32,8 +35,16 @@ def mapData(data, type):
             result.append(valuesItem)
     return result
 
-def mapDataLastestFinancialReportsName(data):
-    return data
+def get_industry_type(symbol):
+    if IndustryTypeListStock.TYPE_NGAN_HANG.count(symbol) > 0:
+        return IndustryTypeConstant.NGAN_HANG
+    elif IndustryTypeListStock.TYPE_BAO_HIEM.count(symbol) > 0:
+        return IndustryTypeConstant.BAO_HIEM
+    elif IndustryTypeListStock.TYPE_CHUNG_KHOAN.count(symbol) > 0:
+        return IndustryTypeConstant.CHUNG_KHOAN
+    elif IndustryTypeListStock.TYPE_QUY.count(symbol) > 0:
+        return IndustryTypeConstant.QUY
+    return IndustryTypeConstant.DEFAULT
 
 
 class LatestFinancialInfoRetrieveAPIView(RetrieveAPIView):
@@ -68,9 +79,14 @@ class LatestFinancialInfoUpdateAPIView(UpdateAPIView):
 
         response = requests.request("GET", url, headers=headers, params=querystring)
 
+        data = response.json()
+
+        if not data or response.status_code != 200:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
         LatestFinancialInfo.objects.filter(Symbol=Symbol).delete()
         
-        serializer = LatestFinancialInfoSerializer(data=response.json())
+        serializer = LatestFinancialInfoSerializer(data=data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
@@ -118,6 +134,10 @@ class YearlyFinancialInfoUpdateAPIView(UpdateAPIView):
         response = requests.request("GET", url, headers=headers, params=querystring)
         
         data = response.json()
+
+        if not data or response.status_code != 200:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
         filteredStock = Stock.objects.filter(Symbol=Symbol)
         if filteredStock.count() != 1:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
@@ -173,6 +193,10 @@ class QuarterlyFinancialInfoUpdateAPIView(UpdateAPIView):
         response = requests.request("GET", url, headers=headers, params=querystring)
         
         data = response.json()
+
+        if not data or response.status_code != 200:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
         filteredStock = Stock.objects.filter(Symbol=Symbol)
         if filteredStock.count() != 1:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
@@ -195,13 +219,12 @@ class LastestFinancialReportsRetrieveAPIView(RetrieveAPIView):
         filterStocks = Stock.objects.filter(Symbol=Symbol)
         if filterStocks.count() != 1:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
-        result = LastestFinancialReportsName.objects.filter(Type=type)
-        query = LastestFinancialReportsValue.objects.filter(Stock_id=filterStocks[0].id)
-
+        industryType = get_industry_type(Symbol)
+        result = LastestFinancialReportsName.objects.filter(Q(Type=type) & Q(IndustryType=industryType))
+        
         if result.count() == 0:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
-        print(203, type)
-        serializer = LastestFinancialReportsSerializer(result, context={'year': year, 'quarter': quarter, 'type': type}, many=True)
+        serializer = LastestFinancialReportsSerializer(result, context={'year': year, 'quarter': quarter, 'type': type, 'stock_id': filterStocks[0].id}, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -235,13 +258,21 @@ class LastestFinancialReportsNameUpdateAPIView(UpdateAPIView):
         
         data = response.json()
 
-        LastestFinancialReportsName.objects.filter(Type=type).delete()
+        if not data or response.status_code != 200:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+        industryType = get_industry_type(Symbol)
+        LastestFinancialReportsName.objects.filter(Q(Type=type) & Q(IndustryType=industryType)).delete()
+        
+        for item in data:
+            item['Type'] = type
+            item['IndustryType'] = industryType
         
         serializer = LastestFinancialReportsNameSerializer(data=data, many=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer.save(Type=type)
+        serializer.save()
         return Response(serializer.data, status = status.HTTP_201_CREATED)
 
 
@@ -275,15 +306,17 @@ class LastestFinancialReportsValueUpdateAPIView(UpdateAPIView):
         
         data = response.json()
 
-        if not data:
+        if not data or response.status_code != 200:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
 
         filteredStock = Stock.objects.filter(Symbol=Symbol)
         if filteredStock.count() != 1:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+        # Delete old one
+        LastestFinancialReportsValue.objects.filter(Q(Stock_id=filteredStock[0].id) & Q(Type=type)).delete()
         
         mappedData = mapData(data, type)
-
 
         serializer = LastestFinancialReportsValueSerializer(data=mappedData, many=True)
         if not serializer.is_valid():
