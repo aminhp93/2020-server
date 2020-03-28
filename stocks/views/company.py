@@ -1,6 +1,7 @@
 import json
 import requests
 from django.http import JsonResponse
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework.generics import (
     CreateAPIView,
@@ -16,14 +17,16 @@ from stocks.serializers import (
     CompanySerializer,
     SubCompanySerializer,
     CompanyOfficerSerializer,
-    CompanyTransactionSerializer
+    CompanyTransactionSerializer,
+    CompanyHistoricalQuoteSerializer
 )
 from stocks.models import (
     Stock,
     Company,
     SubCompany,
     CompanyOfficer,
-    CompanyTransaction
+    CompanyTransaction,
+    CompanyHistoricalQuote
 )
 
 class CompanyListAPIView(RetrieveAPIView):
@@ -211,4 +214,63 @@ class CompanyTransactionsUpdateAPIView(UpdateAPIView):
         return Response(serializer.data, status = status.HTTP_201_CREATED)
 
 
+class CompanyHistoricalQuoteRetrieveAPIView(RetrieveAPIView):
+    def get(self, request, *args, **kwargs):
+        Symbol = request.GET.get('symbol')
+        startDate = request.GET.get('startDate')
+        endDate = request.GET.get('endDate')
 
+        filterStocks = Stock.objects.filter(Symbol=Symbol)
+        if filterStocks.count() != 1:
+            return Response(None, status=status.HTTP_404_NOT_FOUND)
+
+        result = CompanyHistoricalQuote.objects.filter(Q(Stock_id=filterStocks[0].id) & Q(Date__gt=startDate) & Q(Date__lt=endDate))
+        if result.count() == 0:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CompanyHistoricalQuoteSerializer(result, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class CompanyHistoricalQuoteUpdateAPIView(UpdateAPIView):
+    def get_queryset(self):
+        return CompanyHistoricalQuote.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        Symbol = request.GET.get('symbol')
+        startDate = request.GET.get('startDate')
+        endDate = request.GET.get('endDate')
+
+        if not Symbol or not startDate or not endDate:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+        
+        url = 'https://svr3.fireant.vn/api/Data/Companies/HistoricalQuotes'
+
+        querystring = {
+            "symbol": Symbol,
+            "startDate": startDate,
+            "endDate": endDate,
+        }
+
+        headers = {
+            'cache-control': "no-cache",
+        }
+
+        response = requests.request("GET", url, headers=headers, params=querystring)
+        
+        data = response.json()
+
+        if not data or response.status_code != 200:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+        # CompanyHistoricalQuote.objects.filter(Q(Type=type) & Q(IndustryType=industryType)).delete()
+        filteredStock = Stock.objects.filter(Symbol=Symbol)
+        if filteredStock.count() != 1:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
+
+        serializer = CompanyHistoricalQuoteSerializer(data=data, many=True)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save(Stock=filteredStock[0])
+        return Response(serializer.data, status = status.HTTP_201_CREATED)

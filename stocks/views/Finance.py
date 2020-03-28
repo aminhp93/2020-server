@@ -141,6 +141,7 @@ class YearlyFinancialInfoUpdateAPIView(UpdateAPIView):
         filteredStock = Stock.objects.filter(Symbol=Symbol)
         if filteredStock.count() != 1:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)        
+
         YearlyFinancialInfo.objects.filter(Stock_id=filteredStock[0].id).delete()
         serializer = YearlyFinancialInfoSerializer(data=data, many=True)
         if not serializer.is_valid():
@@ -159,9 +160,11 @@ class QuarterlyFinancialInfoRetrieveAPIView(RetrieveAPIView):
         filterStocks = Stock.objects.filter(Symbol=Symbol)
         if filterStocks.count() != 1:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
+
         result = QuarterlyFinancialInfo.objects.filter(Stock_id=filterStocks[0].id)
         if result.count() == 0:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
+
         serializer = QuarterlyFinancialInfoSerializer(result, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
