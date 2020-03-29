@@ -50,6 +50,7 @@ from stocks.views.Finance import (
     LastestFinancialReportsValueUpdateAPIView,
 )
 from stocks.views.IntradayQuote import IntradayQuoteAPIView
+from stocks.views.Analysis import AnalysisListAPIView
 from rest_framework import routers
 
 router = routers.SimpleRouter(trailing_slash=False)
@@ -87,6 +88,8 @@ urlpatterns = [
     path('api/Data/Finance/LastestFinancialReportsName/update/', LastestFinancialReportsNameUpdateAPIView.as_view()),
     path('api/Data/Finance/LastestFinancialReportsValue/update/', LastestFinancialReportsValueUpdateAPIView.as_view()),
     # 
+
+    path('api/Analysis/', AnalysisListAPIView.as_view())
     # path('api/Data/Companies/HistoricalQuotes/', HistoricalQuoteAPIView.as_view()),
     # path('api/Data/Companies/CompanyInfo/', IntradayQuoteAPIView.as_view()),
     # url(r'^api-auth/', include('rest_framework.urls'))

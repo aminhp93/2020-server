@@ -107,3 +107,23 @@ class LastestFinancialReportsSerializer(serializers.ModelSerializer):
             'Field',
             'Values'
         )
+
+
+class AnalysisSerializer(serializers.ModelSerializer):
+    # StockObj = serializers.SerializerMethodField()
+
+    # def get_StockObj(self, obj):
+    #     stocks = Stock.objects.filter(id=obj.Stock_id)
+    #     if stocks.count() == 1:
+    #         return StockSerializer(stocks[0]).data
+    #     return None
+
+    class Meta:
+        model = CompanyHistoricalQuote
+        fields = (
+            # 'Stock',
+            # 'StockObj',
+            'PriceClose',
+            'MarketCap',
+            'Volume'
+        )
