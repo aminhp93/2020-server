@@ -15,7 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+
 from .view import home
+from cores.views import (
+    ConfigListAPIView,
+    ConfigCreateAPIView,
+    ConfigRetrieveAPIView,
+    ConfigUpdateAPIView,
+    ConfigDestroyAPIView
+)
 from stocks.views.Stock import StockAPIView
 from stocks.views.Company import (
     CompanyListAPIView,
@@ -50,6 +58,11 @@ router = routers.SimpleRouter(trailing_slash=False)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
+    path('api/config/', ConfigListAPIView.as_view()),
+    # path('api/config/', ConfigCreateAPIView.as_view()),
+    # path('api/config/', ConfigRetrieveAPIView.as_view()),
+    path('api/config/<int:pk>/', ConfigUpdateAPIView.as_view()),
+    # path('api/config/<int:pk>/', ConfigDestroyAPIView.as_view()),
     # 
     path('api/Data/Markets/TradingStatistic/', StockAPIView.as_view()),
     # 
