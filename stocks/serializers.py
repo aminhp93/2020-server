@@ -121,7 +121,7 @@ class AnalysisSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompanyHistoricalQuote
         fields = (
-            # 'Stock',
+            'Stock',
             # 'StockObj',
             'PriceClose',
             'MarketCap',
