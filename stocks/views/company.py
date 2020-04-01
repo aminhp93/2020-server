@@ -221,10 +221,12 @@ class CompanyHistoricalQuoteRetrieveAPIView(RetrieveAPIView):
         endDate = request.GET.get('endDate')
 
         filterStocks = Stock.objects.filter(Symbol=Symbol)
-        if filterStocks.count() != 1:
+        if not Symbol or not startDate or not endDate or filterStocks.count() != 1:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
-
-        result = CompanyHistoricalQuote.objects.filter(Q(Stock_id=filterStocks[0].id) & Q(Date__gt=startDate) & Q(Date__lt=endDate))
+        startDate += 'T00:00:00Z'
+        endDate += 'T00:00:00Z'
+        result = CompanyHistoricalQuote.objects.filter(Q(Stock_id=filterStocks[0].id) & Q(Date__gte=startDate) & Q(Date__lte=endDate))
+        print(result.count())
         if result.count() == 0:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
 
