@@ -24,7 +24,10 @@ from cores.views import (
     ConfigUpdateAPIView,
     ConfigDestroyAPIView
 )
-from stocks.views.Stock import StockAPIView
+from stocks.views.Stock import (
+    StockAPIView,
+    StockFilterAPIView
+)
 from stocks.views.Company import (
     CompanyListAPIView,
     CompanyUpdateAPIView,
@@ -89,7 +92,8 @@ urlpatterns = [
     path('api/Data/Finance/LastestFinancialReportsValue/update/', LastestFinancialReportsValueUpdateAPIView.as_view()),
     # 
 
-    path('api/Analysis/', AnalysisListAPIView.as_view())
+    path('api/Analysis/', AnalysisListAPIView.as_view()),
+    path('api/Stock/Filter/', StockFilterAPIView.as_view())
     # path('api/Data/Companies/HistoricalQuotes/', HistoricalQuoteAPIView.as_view()),
     # path('api/Data/Companies/CompanyInfo/', IntradayQuoteAPIView.as_view()),
     # url(r'^api-auth/', include('rest_framework.urls'))
