@@ -44,14 +44,14 @@ class StockFilterAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         ICBCode = request.data.get('ICBCode')
+        Date = request.data.get('Date')
         filteredCompany = Company.objects.filter(ICBCode=ICBCode)
         filteredStocks = Stock.objects.filter(Symbol__in=[i.Symbol for i in filteredCompany])
-    
-        filteredConfigs = Config.objects.filter(key='LAST_UPDATED_HISTORICAL_QUOTES')
-        if filteredConfigs.count() == 1:
-            lastUpdatedDate = filteredConfigs[0].value
-            lastUpdatedDate += 'T00:00:00Z'
-            result = CompanyHistoricalQuote.objects.filter(Q(Date=lastUpdatedDate) & Q(Stock_id__in=[i.id for i in filteredStocks]))
-            serializer = CompanyHistoricalQuoteSerializer(result, many=True)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response({})
+        if not ICBCode or not Date:
+            return Response({})
+        Date = Date + 'T00:00:00Z'
+        result = CompanyHistoricalQuote.objects.filter(Q(Date=Date) & Q(Stock_id__in=[i.id for i in filteredStocks]))
+        serializer = CompanyHistoricalQuoteSerializer(result, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+
