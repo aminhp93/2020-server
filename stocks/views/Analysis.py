@@ -25,8 +25,6 @@ from stocks.models import (
 class AnalysisListAPIView(ListAPIView):
     def get(self, request, *args, **kwargs):
         Date = request.GET.get('Date')
-        Date = Date + 'T00:00:00Z'
-        # 2020-03-29T00:00:00Z
         data = CompanyHistoricalQuote.objects.filter(Date=Date)
         serializer = AnalysisSerializer(data, many=True)
 
