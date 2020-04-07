@@ -45,6 +45,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'rest_framework',
     'corsheaders',
+    'django_rq'
 ]
 
 LOCAL_APPS = [
@@ -186,3 +187,17 @@ REST_FRAMEWORK = {
 }
 
 APPEND_SLASH = False
+
+REDIS_URL = 'redis://localhost:6379/0'
+
+RQ_QUEUES = {
+    'default': {
+        'URL': REDIS_URL,
+        'DEFAULT_TIMEOUT': 360,
+    },
+    'test': {
+        'URL': REDIS_URL,
+        'DEFAULT_TIMEOUT': 360,
+    }
+}
+

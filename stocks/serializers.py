@@ -61,13 +61,15 @@ class LatestFinancialInfoSerializer(serializers.ModelSerializer):
 class YearlyFinancialInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = YearlyFinancialInfo
-        exclude = ['Stock']
+        # exclude = ['Stock']
+        fields = '__all__'
 
 
 class QuarterlyFinancialInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuarterlyFinancialInfo
-        exclude = ['Stock']
+        # exclude = ['Stock']
+        fields = '__all__'
 
 
 class LastestFinancialReportsNameSerializer(serializers.ModelSerializer):

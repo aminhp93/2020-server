@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from .view import home
 from cores.views import (
@@ -46,20 +46,20 @@ from stocks.views.Finance import (
     LatestFinancialInfoUpdateAPIView,
     YearlyFinancialInfoRetrieveAPIView,
     YearlyFinancialInfoUpdateAPIView,
+    YearlyFinancialInfoFilterAPIView,
     QuarterlyFinancialInfoRetrieveAPIView,
     QuarterlyFinancialInfoUpdateAPIView,
+    QuarterlyFinancialInfoFilterAPIView,
     LastestFinancialReportsRetrieveAPIView,
     LastestFinancialReportsNameUpdateAPIView,
     LastestFinancialReportsValueUpdateAPIView,
 )
 from stocks.views.IntradayQuote import IntradayQuoteAPIView
 from stocks.views.Analysis import AnalysisListAPIView
-from rest_framework import routers
-
-router = routers.SimpleRouter(trailing_slash=False)
 
 
 urlpatterns = [
+    path('django-rq/', include('django_rq.urls')),
     path('admin/', admin.site.urls),
     path('', home, name='home'),
     path('api/config/', ConfigListAPIView.as_view()),
@@ -85,8 +85,10 @@ urlpatterns = [
     path('api/Data/Finance/LastestFinancialInfo/update/', LatestFinancialInfoUpdateAPIView.as_view()),
     path('api/Data/Finance/YearlyFinancialInfo/', YearlyFinancialInfoRetrieveAPIView.as_view()),
     path('api/Data/Finance/YearlyFinancialInfo/update/', YearlyFinancialInfoUpdateAPIView.as_view()),
+    path('api/Data/Finance/YearlyFinancialInfo/filter/', YearlyFinancialInfoFilterAPIView.as_view()),
     path('api/Data/Finance/QuarterlyFinancialInfo/', QuarterlyFinancialInfoRetrieveAPIView.as_view()),
     path('api/Data/Finance/QuarterlyFinancialInfo/update/', QuarterlyFinancialInfoUpdateAPIView.as_view()),
+    path('api/Data/Finance/QuarterlyFinancialInfo/filter/', QuarterlyFinancialInfoFilterAPIView.as_view()),
     path('api/Data/Finance/LastestFinancialReports/', LastestFinancialReportsRetrieveAPIView.as_view()),
     path('api/Data/Finance/LastestFinancialReportsName/update/', LastestFinancialReportsNameUpdateAPIView.as_view()),
     path('api/Data/Finance/LastestFinancialReportsValue/update/', LastestFinancialReportsValueUpdateAPIView.as_view()),
@@ -99,5 +101,4 @@ urlpatterns = [
     # url(r'^api-auth/', include('rest_framework.urls'))
 ]
 
-urlpatterns += router.urls
 

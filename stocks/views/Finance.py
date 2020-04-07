@@ -5,6 +5,7 @@ from django.db.models import Q
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
 
 from stocks.serializers import (
     LatestFinancialInfoSerializer,
@@ -12,10 +13,12 @@ from stocks.serializers import (
     QuarterlyFinancialInfoSerializer,
     LastestFinancialReportsSerializer,
     LastestFinancialReportsNameSerializer,
-    LastestFinancialReportsValueSerializer
+    LastestFinancialReportsValueSerializer,
+    CompanyHistoricalQuoteSerializer
 )
 from stocks.models import (
     Stock,
+    Company,
     LatestFinancialInfo, 
     YearlyFinancialInfo,
     QuarterlyFinancialInfo,
@@ -151,6 +154,22 @@ class YearlyFinancialInfoUpdateAPIView(UpdateAPIView):
         return Response(serializer.data, status = status.HTTP_201_CREATED)
 
 
+class YearlyFinancialInfoFilterAPIView(APIView):
+     def post(self, request, *args, **kwargs):
+        ICBCode = request.data.get('ICBCode')
+        
+        if not ICBCode:
+            return Response({'Error': 'No ICBCode'})
+        result = []
+        
+        filteredCompany = Company.objects.filter(ICBCode=ICBCode)
+        filteredStocks = Stock.objects.filter(Symbol__in=[i.Symbol for i in filteredCompany])
+        result = YearlyFinancialInfo.objects.filter(Q(Stock_id__in=[i.id for i in filteredStocks]))
+        
+        serializer = YearlyFinancialInfoSerializer(result, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class QuarterlyFinancialInfoRetrieveAPIView(RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         Symbol = request.GET.get('symbol')
@@ -210,6 +229,34 @@ class QuarterlyFinancialInfoUpdateAPIView(UpdateAPIView):
 
         serializer.save(Stock=filteredStock[0])
         return Response(serializer.data, status = status.HTTP_201_CREATED)
+
+
+class QuarterlyFinancialInfoFilterAPIView(APIView):
+     def post(self, request, *args, **kwargs):
+        ICBCode = request.data.get('ICBCode')
+        symbol = request.data.get('symbol')
+        
+        if not ICBCode and not symbol:
+            return Response({'Error': 'No ICBCode and symbol'})
+        result = []
+
+        if ICBCode and not symbol:
+            filteredCompany = Company.objects.filter(ICBCode=ICBCode)
+            filteredStocks = Stock.objects.filter(Symbol__in=[i.Symbol for i in filteredCompany])
+            result = QuarterlyFinancialInfo.objects.filter(Q(Stock_id__in=[i.id for i in filteredStocks]))
+            
+            serializer = QuarterlyFinancialInfoSerializer(result, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        if symbol and not ICBCode:
+            filteredCompany = Company.objects.filter(Symbol=symbol)
+            filteredStocks = Stock.objects.filter(Symbol__in=[i.Symbol for i in filteredCompany])
+            result = QuarterlyFinancialInfo.objects.filter(Q(Stock_id__in=[i.id for i in filteredStocks]))
+            
+            serializer = QuarterlyFinancialInfoSerializer(result, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response({})
 
 
 class LastestFinancialReportsRetrieveAPIView(RetrieveAPIView):
