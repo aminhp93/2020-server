@@ -12,6 +12,7 @@ from rest_framework.generics import (
 )
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
 
 from stocks.serializers import (
     CompanySerializer,
@@ -66,6 +67,18 @@ class CompanyUpdateAPIView(UpdateAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
         return Response(serializer.data, status = status.HTTP_201_CREATED)
+
+
+class CompanyInfoFilterAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        symbols = request.data.get('symbols')
+        
+        if not symbols:
+            return Response({'Error': 'No symbols'})
+        
+        result = Company.objects.filter(Symbol__in=symbols)
+        serializer = CompanySerializer(result, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SubCompanyAPIView(RetrieveAPIView):

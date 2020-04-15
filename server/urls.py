@@ -31,6 +31,7 @@ from stocks.views.Stock import (
 from stocks.views.Company import (
     CompanyListAPIView,
     CompanyUpdateAPIView,
+    CompanyInfoFilterAPIView,
     SubCompanyAPIView,
     SubCompanyUpdateAPIView,
     CompanyOfficerAPIView,
@@ -44,6 +45,7 @@ from stocks.views.HistoricalQuote import HistoricalQuoteAPIView
 from stocks.views.Finance import (
     LatestFinancialInfoRetrieveAPIView,
     LatestFinancialInfoUpdateAPIView,
+    LatestFinancialInfoFilterAPIView,
     YearlyFinancialInfoRetrieveAPIView,
     YearlyFinancialInfoUpdateAPIView,
     YearlyFinancialInfoFilterAPIView,
@@ -72,6 +74,7 @@ urlpatterns = [
     # 
     path('api/Data/Companies/CompanyInfo/', CompanyListAPIView.as_view()),
     path('api/Data/Companies/CompanyInfo/update/', CompanyUpdateAPIView.as_view()),
+    path('api/Data/Companies/CompanyInfo/filter/', CompanyInfoFilterAPIView.as_view()),
     path('api/Data/Companies/SubCompanies/', SubCompanyAPIView.as_view()),
     path('api/Data/Companies/SubCompanies/update/', SubCompanyUpdateAPIView.as_view()),
     path('api/Data/Companies/CompanyOfficers/', CompanyOfficerAPIView.as_view()),
@@ -83,6 +86,7 @@ urlpatterns = [
     # 
     path('api/Data/Finance/LastestFinancialInfo/', LatestFinancialInfoRetrieveAPIView.as_view()),
     path('api/Data/Finance/LastestFinancialInfo/update/', LatestFinancialInfoUpdateAPIView.as_view()),
+    path('api/Data/Finance/LastestFinancialInfo/filter/', LatestFinancialInfoFilterAPIView.as_view()),
     path('api/Data/Finance/YearlyFinancialInfo/', YearlyFinancialInfoRetrieveAPIView.as_view()),
     path('api/Data/Finance/YearlyFinancialInfo/update/', YearlyFinancialInfoUpdateAPIView.as_view()),
     path('api/Data/Finance/YearlyFinancialInfo/filter/', YearlyFinancialInfoFilterAPIView.as_view()),

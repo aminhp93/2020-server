@@ -96,6 +96,18 @@ class LatestFinancialInfoUpdateAPIView(UpdateAPIView):
         return Response(serializer.data, status = status.HTTP_201_CREATED)
 
 
+class LatestFinancialInfoFilterAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        symbols = request.data.get('symbols')
+        
+        if not symbols:
+            return Response({'Error': 'No symbols'})
+
+        result = LatestFinancialInfo.objects.filter(Symbol__in=symbols)
+        serializer = LatestFinancialInfoSerializer(result, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class YearlyFinancialInfoRetrieveAPIView(RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         Symbol = request.GET.get('symbol')
@@ -232,7 +244,7 @@ class QuarterlyFinancialInfoUpdateAPIView(UpdateAPIView):
 
 
 class QuarterlyFinancialInfoFilterAPIView(APIView):
-     def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         ICBCode = request.data.get('ICBCode')
         symbol = request.data.get('symbol')
         
