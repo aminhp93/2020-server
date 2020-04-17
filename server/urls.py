@@ -57,7 +57,7 @@ from stocks.views.Finance import (
     LastestFinancialReportsValueUpdateAPIView,
 )
 from stocks.views.IntradayQuote import IntradayQuoteAPIView
-from stocks.views.Analysis import AnalysisListAPIView
+from stocks.views.Analysis import AnalysisListAPIView, StockNewsAPIView
 
 
 urlpatterns = [
@@ -99,7 +99,8 @@ urlpatterns = [
     # 
 
     path('api/Analysis/', AnalysisListAPIView.as_view()),
-    path('api/Stock/Filter/', StockFilterAPIView.as_view())
+    path('api/Stock/Filter/', StockFilterAPIView.as_view()),
+    path('api/Stock/News/', StockNewsAPIView.as_view())
     # path('api/Data/Companies/HistoricalQuotes/', HistoricalQuoteAPIView.as_view()),
     # path('api/Data/Companies/CompanyInfo/', IntradayQuoteAPIView.as_view()),
     # url(r'^api-auth/', include('rest_framework.urls'))
