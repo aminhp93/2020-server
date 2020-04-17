@@ -1,0 +1,46 @@
+version: 2 # use CircleCI 2.0
+jobs:
+  build:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout # special step to check out source code to working directory
+  
+  deploy:
+    machine:
+      enabled: true
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "e5:68:ec:96:06:8a:ca:bf:c6:52:b9:91:75:3b:4d:ba"
+      - run:
+          name: "SSH to Ubuntu and run the deployment script"
+          command: |
+            echo $KEY_PEM > 2020-server.base64
+            base64 --decode 2020-server.base64 > 2020-server.pem
+            chmod 400 2020-server.pem
+            ssh -i "2020-server.pem" ubuntu@ec2-18-207-193-124.compute-1.amazonaws.com bash -c '\
+                echo 1    
+                pwd
+                cd /var/www/2020-server/
+                pwd
+                ls -a
+                sudo git pull
+                sudo poetry install
+                sudo systemctl restart 2020-server
+                sudo service nginx restart'
+
+workflows:
+  version: 2
+  Build and Test:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: [master]
+        
+
+      
