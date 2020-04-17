@@ -28,7 +28,7 @@ from stocks.views.Stock import (
     StockAPIView,
     StockFilterAPIView
 )
-from stocks.views.Company import (
+from stocks.views.company import (
     CompanyListAPIView,
     CompanyUpdateAPIView,
     CompanyInfoFilterAPIView,
