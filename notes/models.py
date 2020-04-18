@@ -3,21 +3,21 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from tags.models import Tag
 
-class Post(models.Model):
+class Note(models.Model):
     title = models.CharField(_('title'), max_length=255, blank=True)
     content = models.TextField(_('content'), blank=True)
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         null=True,
-        related_name='post_creator'
+        related_name='note_creator'
     )
-    tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
+    tags = models.ManyToManyField(Tag, related_name='notes', blank=True)
 
     class Meta:
         ordering = ('-id',)
-        verbose_name = _('post')
-        verbose_name_plural = _('posts')
+        verbose_name = _('note')
+        verbose_name_plural = _('notes')
     
     def __str__(self):
         return self.content_excerpt

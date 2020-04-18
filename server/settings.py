@@ -50,7 +50,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     'cores',
-    'posts',
+    'notes',
     'tags',
     'stocks',
 ]

@@ -59,8 +59,17 @@ from stocks.views.Finance import (
 from stocks.views.IntradayQuote import IntradayQuoteAPIView
 from stocks.views.Analysis import AnalysisListAPIView, StockNewsAPIView
 
+from notes.views import NoteViewSet
 
-urlpatterns = [
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+
+router.register(r'api/Note', NoteViewSet, basename='note')
+
+urlpatterns = router.urls
+
+urlpatterns = router.urls + [
     path('django-rq/', include('django_rq.urls')),
     path('admin/', admin.site.urls),
     path('', home, name='home'),
@@ -100,10 +109,13 @@ urlpatterns = [
 
     path('api/Analysis/', AnalysisListAPIView.as_view()),
     path('api/Stock/Filter/', StockFilterAPIView.as_view()),
-    path('api/Stock/News/', StockNewsAPIView.as_view())
+    path('api/Stock/News/', StockNewsAPIView.as_view()),
+    #
+
     # path('api/Data/Companies/HistoricalQuotes/', HistoricalQuoteAPIView.as_view()),
     # path('api/Data/Companies/CompanyInfo/', IntradayQuoteAPIView.as_view()),
     # url(r'^api-auth/', include('rest_framework.urls'))
 ]
+
 
 
