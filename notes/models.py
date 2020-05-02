@@ -2,8 +2,10 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from tags.models import Tag
+from model_utils.models import SoftDeletableModel, TimeStampedModel
 
-class Note(models.Model):
+
+class Note(TimeStampedModel):
     title = models.CharField(_('title'), max_length=255, blank=True)
     content = models.TextField(_('content'), blank=True)
     creator = models.ForeignKey(
