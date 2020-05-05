@@ -93,8 +93,28 @@ class LastestFinancialReportsSerializer(serializers.ModelSerializer):
         type = self.context.get('type')
         stock_id = self.context.get('stock_id')
         if year and quarter and type and stock_id:
-            query = LastestFinancialReportsValue.objects.filter(Q(Stock_id=stock_id) & Q(Type=type) & Q(ID=obj.ID))
-            return LastestFinancialReportsValueSerializer(query, many=True).data
+            query = None
+            if quarter == '0':
+                # YEARLY
+                YearArray = [2020, 2019, 2018, 2017, 2016, 2015, 2014]
+                query = LastestFinancialReportsValue.objects.filter(Q(Stock_id=stock_id) & Q(Type=type) & Q(ID=obj.ID) & Q(Year__in=YearArray) & Q(Quarter=0))
+            elif quarter == '4':
+                # QUARTERLY
+                QuarterArray = []
+                query = LastestFinancialReportsValue.objects.filter(
+                    Q(Stock_id=stock_id) &
+                    Q(Type=type) & 
+                    Q(ID=obj.ID) &
+                    (
+                        (Q(Year=2020) & Q(Quarter=1)) |
+                        (Q(Year=2019) & Q(Quarter=4)) |
+                        (Q(Year=2019) & Q(Quarter=3)) |
+                        (Q(Year=2019) & Q(Quarter=2)) |
+                        (Q(Year=2019) & Q(Quarter=1))
+                    )
+                )
+            if query:
+                return LastestFinancialReportsValueSerializer(query, many=True).data
         return None
 
     class Meta:
