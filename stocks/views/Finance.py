@@ -38,6 +38,11 @@ def mapData(data, type):
             result.append(valuesItem)
     return result
 
+def filterData(data):
+    for item in data:
+        item['Values'] = [a for a in item['Values'] if a['Year'] == 2020]
+    return data        
+
 def get_industry_type(symbol):
     if IndustryTypeListStock.TYPE_NGAN_HANG.count(symbol) > 0:
         return IndustryTypeConstant.NGAN_HANG
@@ -375,11 +380,18 @@ class LastestFinancialReportsValueUpdateAPIView(UpdateAPIView):
         if filteredStock.count() != 1:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
 
-        # Delete old one
-        LastestFinancialReportsValue.objects.filter(Q(Stock_id=filteredStock[0].id) & Q(Type=type)).delete()
+        # DELETE ALL DATA FROM 2020
+        LastestFinancialReportsValue.objects.filter(
+            Q(Stock_id=filteredStock[0].id)
+            & Q(Type=type)
+            & Q(Year=2020)
+        ).delete()
         
-        mappedData = mapData(data, type)
+        # ONLY GET DATA FROM 2020
+        filterData(data)
 
+        mappedData = mapData(data, type)
+        # print(data)
         serializer = LastestFinancialReportsValueSerializer(data=mappedData, many=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
