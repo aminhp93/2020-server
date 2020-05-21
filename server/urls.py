@@ -58,6 +58,12 @@ from stocks.views.Finance import (
 )
 from stocks.views.IntradayQuote import IntradayQuoteAPIView
 from stocks.views.Analysis import AnalysisListAPIView, StockNewsAPIView
+from stocks.views.MarketNews import (
+    AllNewsApiView,
+    PositiveNewsApiView,
+    NegativeNewsApiView,
+    NewsInGroupApiView
+)
 
 from notes.views import NoteViewSet
 
@@ -111,6 +117,11 @@ urlpatterns = router.urls + [
     path('api/Stock/Filter/', StockFilterAPIView.as_view()),
     path('api/Stock/News/', StockNewsAPIView.as_view()),
     #
+    path('api/Data/News/AllNews', AllNewsApiView.as_view()),
+    path('api/Data/News/PositiveNews', PositiveNewsApiView.as_view()),
+    path('api/Data/News/NegativeNews', NegativeNewsApiView.as_view()),
+    path('api/Data/News/NewsInGroup', NewsInGroupApiView.as_view()),
+    # 
 
     # path('api/Data/Companies/HistoricalQuotes/', HistoricalQuoteAPIView.as_view()),
     # path('api/Data/Companies/CompanyInfo/', IntradayQuoteAPIView.as_view()),
