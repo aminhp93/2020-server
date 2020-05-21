@@ -7,9 +7,21 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 
+import pusher
+
+pusher_client = pusher.Pusher(
+  app_id='1005339',
+  key='c7a8b270cb1e9d469c5c',
+  secret='59c1c86dfc95cb241990',
+  cluster='ap1',
+  ssl=True
+)
+
+pusher_client.trigger('my-channel', 'my-event', {'message': 'hello world2'})
 
 class AllNewsApiView(APIView):
     def get(self, request, *args, **kwargs):
+        
         startIndex = request.GET.get('startIndex')
         count = request.GET.get('count')
 
