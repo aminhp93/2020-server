@@ -26,7 +26,8 @@ from cores.views import (
 )
 from stocks.views.Stock import (
     StockAPIView,
-    StockFilterAPIView
+    StockFilterAPIView,
+    StockViewSet
 )
 from stocks.views.company import (
     CompanyListAPIView,
@@ -72,6 +73,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 
 router.register(r'api/Note', NoteViewSet, basename='note')
+router.register(r'api2/Stock', StockViewSet, basename='stock')
 
 urlpatterns = router.urls
 

@@ -8,6 +8,8 @@ from .constants import LastestFinancialReports, IndustryTypeConstant
 class Stock(TimeStampedModel):
     Symbol = models.CharField(_('Symbol'), max_length=255, blank=True, unique=True, null=False)
     Exchange = models.CharField(_('Exchange'), max_length=255, blank=True, null=False)
+    IsVN30 = models.BooleanField(_('IsVN30'), default=False)
+    IsFavorite = models.BooleanField(_('IsFavorite'), default=False)
 
 
 class Company(TimeStampedModel):
