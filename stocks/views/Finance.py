@@ -106,7 +106,7 @@ class LatestFinancialInfoFilterAPIView(APIView):
         symbols = request.data.get('symbols')
         
         if not symbols:
-            return Response({'Error': 'No symbols'})
+            return Response([])
 
         result = LatestFinancialInfo.objects.filter(Symbol__in=symbols)
         serializer = LatestFinancialInfoSerializer(result, many=True)

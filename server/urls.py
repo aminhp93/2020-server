@@ -27,7 +27,8 @@ from cores.views import (
 from stocks.views.Stock import (
     StockAPIView,
     StockFilterAPIView,
-    StockViewSet
+    StockViewSet,
+    StockScanAPIView
 )
 from stocks.views.company import (
     CompanyListAPIView,
@@ -117,6 +118,7 @@ urlpatterns = router.urls + [
 
     path('api/Analysis/', AnalysisListAPIView.as_view()),
     path('api/Stock/Filter/', StockFilterAPIView.as_view()),
+    path('api/Stock/scan/', StockScanAPIView.as_view()),
     path('api/Stock/News/', StockNewsAPIView.as_view()),
     #
     path('api/Data/News/AllNews', AllNewsApiView.as_view()),

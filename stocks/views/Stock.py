@@ -98,3 +98,16 @@ class StockViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+
+class StockScanAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        Symbol = request.data.get('Symbol')
+        IsVN30 = request.data.get('IsVN30')
+
+        if Symbol:
+            queryset = Stock.objects.filter(Symbol=Symbol)
+        else:
+            queryset = Stock.objects.all()
+        serializer = StockSerializer(queryset, many=True)
+        return Response(serializer.data)
