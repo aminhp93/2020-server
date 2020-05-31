@@ -4,7 +4,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.db.models import Q
+from django.db.models import Q, F
 from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
 
@@ -103,13 +103,43 @@ class StockViewSet(viewsets.ViewSet):
 class StockScanAPIView(APIView):
     def post(self, request, *args, **kwargs):
         Symbol = request.data.get('Symbol')
-        IsVN30 = request.data.get('IsVN30')
+        type = request.data.get('type')
         TodayCapital = request.data.get('TodayCapital')
+        Date = request.data.get('Date')
+        Date = '2020-05-29T00:00:00Z'
         print(TodayCapital)
-
+        
         if Symbol:
-            queryset = Stock.objects.filter(Symbol=Symbol)
+            filteredStocks = Stock.objects.filter(Symbol__contains=Symbol)
+            companyHistoricalQuote = CompanyHistoricalQuote.objects\
+                .filter(Date=Date)\
+                .filter(Stock_id__in=[i.id for i in filteredStocks])
+            serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, many=True)
+        elif type:
+            if type == 'IsVN30':
+                filteredStocks = Stock.objects.filter(IsVN30=True)
+                companyHistoricalQuote = CompanyHistoricalQuote.objects\
+                    .filter(Date=Date)\
+                    .filter(Stock_id__in=[i.id for i in filteredStocks])
+                serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, many=True)
+            elif type == 'IsFavorite':
+                filteredStocks = Stock.objects.filter(IsFavorite=True)
+                companyHistoricalQuote = CompanyHistoricalQuote.objects\
+                    .filter(Date=Date)\
+                    .filter(Stock_id__in=[i.id for i in filteredStocks])
+                serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, many=True)
+            else:
+                companyHistoricalQuote = CompanyHistoricalQuote.objects\
+                    .filter(Date=Date)\
+                    .annotate(TodayCapital=F('PriceClose') * F('DealVolume'))\
+                    .filter(TodayCapital__gt=TodayCapital)
+                
+                serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, many=True)
         else:
-            queryset = []
-        serializer = StockScanSerializer(queryset, many=True)
+            companyHistoricalQuote = CompanyHistoricalQuote.objects\
+                .filter(Date=Date)\
+                .annotate(TodayCapital=F('PriceClose') * F('DealVolume'))\
+                .filter(TodayCapital__gt=TodayCapital)
+            
+            serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, many=True)
         return Response(serializer.data)

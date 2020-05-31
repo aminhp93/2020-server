@@ -51,6 +51,11 @@ class CompanyOfficerSerializer(serializers.ModelSerializer):
 
 
 class CompanyHistoricalQuoteSerializer(serializers.ModelSerializer):
+    TodayCapital = serializers.SerializerMethodField()
+
+    def get_TodayCapital(self, obj):
+        return obj.PriceClose * obj.DealVolume
+
     class Meta:
         model = CompanyHistoricalQuote
         fields = '__all__'
