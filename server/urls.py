@@ -31,8 +31,7 @@ from stocks.views.Stock import (
     StockScanAPIView
 )
 from stocks.views.company import (
-    CompanyListAPIView,
-    CompanyUpdateAPIView,
+    CompanyViewSet,
     CompanyInfoFilterAPIView,
     SubCompanyAPIView,
     SubCompanyUpdateAPIView,
@@ -75,6 +74,7 @@ router = DefaultRouter()
 
 router.register(r'api/Note', NoteViewSet, basename='note')
 router.register(r'api2/Stock', StockViewSet, basename='stock')
+router.register(r'api/Company', CompanyViewSet, basename='company')
 
 urlpatterns = router.urls
 
@@ -90,8 +90,8 @@ urlpatterns = router.urls + [
     # 
     path('api/Data/Markets/TradingStatistic/', StockAPIView.as_view()),
     # 
-    path('api/Data/Companies/CompanyInfo/', CompanyListAPIView.as_view()),
-    path('api/Data/Companies/CompanyInfo/update/', CompanyUpdateAPIView.as_view()),
+    # path('api/Data/Companies/CompanyInfo/', CompanyListAPIView.as_view()),
+    # path('api/Data/Companies/CompanyInfo/update/', CompanyUpdateAPIView.as_view()),
     path('api/Data/Companies/CompanyInfo/filter/', CompanyInfoFilterAPIView.as_view()),
     path('api/Data/Companies/SubCompanies/', SubCompanyAPIView.as_view()),
     path('api/Data/Companies/SubCompanies/update/', SubCompanyUpdateAPIView.as_view()),

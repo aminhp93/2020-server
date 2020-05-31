@@ -13,7 +13,7 @@ class Stock(TimeStampedModel):
 
 
 class Company(TimeStampedModel):
-    Symbol = models.CharField(_('ICBCode'), max_length=255, blank=True, unique=True, null=False) # "FPT"
+    Stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None, related_name='stock_company')
     ICBCode = models.CharField(_('ICBCode'), max_length=255, blank=True, null=True) # "9537"
     CompanyName = models.CharField(_('CompanyName'), max_length=255, blank=True, null=True) # "CTCP FPT"
     ShortName = models.CharField(_('ShortName'), max_length=255, blank=True, null=True) # "FPT Corp"

@@ -28,6 +28,16 @@ class CompanySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CompanyListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company
+
+        fields = [
+            'ICBCode',
+            'Stock'
+        ]
+
+
 class SubCompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = SubCompany
@@ -149,3 +159,14 @@ class AnalysisSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompanyHistoricalQuote
         fields = '__all__'
+
+
+class StockScanSerializer(serializers.ModelSerializer):
+    stockId = serializers.SerializerMethodField()
+
+    def get_stockId(self, obj):
+        return obj.id
+
+    class Meta:
+        model = Stock
+        fields = ['stockId']

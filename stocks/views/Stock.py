@@ -17,6 +17,7 @@ from stocks.models import (
 )
 from stocks.serializers import (
     StockSerializer,
+    StockScanSerializer,
     CompanyHistoricalQuoteSerializer
 )
 
@@ -47,7 +48,6 @@ class StockAPIView(ListAPIView):
 class StockFilterAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
-        print(50)
         ICBCode = request.data.get('ICBCode')
         Date = request.data.get('Date')
         IsVN30 = request.data.get('IsVN30')
@@ -104,10 +104,12 @@ class StockScanAPIView(APIView):
     def post(self, request, *args, **kwargs):
         Symbol = request.data.get('Symbol')
         IsVN30 = request.data.get('IsVN30')
+        TodayCapital = request.data.get('TodayCapital')
+        print(TodayCapital)
 
         if Symbol:
             queryset = Stock.objects.filter(Symbol=Symbol)
         else:
-            queryset = Stock.objects.all()
-        serializer = StockSerializer(queryset, many=True)
+            queryset = []
+        serializer = StockScanSerializer(queryset, many=True)
         return Response(serializer.data)
