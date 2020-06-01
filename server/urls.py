@@ -32,6 +32,7 @@ from stocks.views.Stock import (
 )
 from stocks.views.company import (
     CompanyViewSet,
+    CompanyUpdateAPIView,
     CompanyInfoFilterAPIView,
     SubCompanyAPIView,
     SubCompanyUpdateAPIView,
@@ -91,7 +92,7 @@ urlpatterns = router.urls + [
     path('api/Data/Markets/TradingStatistic/', StockAPIView.as_view()),
     # 
     # path('api/Data/Companies/CompanyInfo/', CompanyListAPIView.as_view()),
-    # path('api/Data/Companies/CompanyInfo/update/', CompanyUpdateAPIView.as_view()),
+    path('api/Data/Companies/CompanyInfo/update/', CompanyUpdateAPIView.as_view()),
     path('api/Data/Companies/CompanyInfo/filter/', CompanyInfoFilterAPIView.as_view()),
     path('api/Data/Companies/SubCompanies/', SubCompanyAPIView.as_view()),
     path('api/Data/Companies/SubCompanies/update/', SubCompanyUpdateAPIView.as_view()),

@@ -106,7 +106,7 @@ class StockScanAPIView(APIView):
         type = request.data.get('type')
         TodayCapital = request.data.get('TodayCapital')
         Date = request.data.get('Date')
-        Date = '2020-05-29T00:00:00Z'
+        Date = '2020-06-01T00:00:00Z'
         print(TodayCapital)
         
         if Symbol:
@@ -121,7 +121,7 @@ class StockScanAPIView(APIView):
                 companyHistoricalQuote = CompanyHistoricalQuote.objects\
                     .filter(Date=Date)\
                     .filter(Stock_id__in=[i.id for i in filteredStocks])
-                serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, many=True)
+                serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, context={'test': True}, many=True)
             elif type == 'IsFavorite':
                 filteredStocks = Stock.objects.filter(IsFavorite=True)
                 companyHistoricalQuote = CompanyHistoricalQuote.objects\

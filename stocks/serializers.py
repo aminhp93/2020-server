@@ -52,9 +52,27 @@ class CompanyOfficerSerializer(serializers.ModelSerializer):
 
 class CompanyHistoricalQuoteSerializer(serializers.ModelSerializer):
     TodayCapital = serializers.SerializerMethodField()
+    PriceChange = serializers.SerializerMethodField()
+    LastPrice = serializers.SerializerMethodField()
 
     def get_TodayCapital(self, obj):
         return obj.PriceClose * obj.DealVolume
+
+    def get_LastPrice(self, obj):
+        test = self.context.get('test')
+        if not test:
+            return None
+        Date = '2020-05-29T00:00:00Z'
+        xxx = CompanyHistoricalQuote.objects.filter(Q(Date=Date) & Q(Stock_id=obj.Stock))[0]
+        return xxx.PriceClose
+
+    def get_PriceChange(self, obj):
+        test = self.context.get('test')
+        if not test:
+            return None
+        Date = '2020-05-29T00:00:00Z'
+        xxx = CompanyHistoricalQuote.objects.filter(Q(Date=Date) & Q(Stock_id=obj.Stock))[0]
+        return (obj.PriceClose - xxx.PriceClose)/obj.PriceClose * 100
 
     class Meta:
         model = CompanyHistoricalQuote
