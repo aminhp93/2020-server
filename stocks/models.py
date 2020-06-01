@@ -533,4 +533,12 @@ class CompanyHistoricalQuote(TimeStampedModel):
     def __str__(self):
         return 'CompanyHistoricalQuote-{}-{}'.format(self.Stock_id, self.Date)
 
-    
+class DecisiveIndex(TimeStampedModel):
+    Stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None, related_name='stock_decisive_index')
+    LowestPoint = models.FloatField(_('LowestPoint'), blank=True, null=True)
+    SellPoint = models.FloatField(_('SellPoint'), blank=True, null=True)
+
+    class Meta:
+        ordering = ('-created', '-id',)
+        verbose_name = _('DecisiveIndex')
+        verbose_name_plural = _('DecisiveIndexes')

@@ -12,7 +12,8 @@ from stocks.models import (
     QuarterlyFinancialInfo,
     LatestFinancialInfo,
     LastestFinancialReportsName,
-    LastestFinancialReportsValue
+    LastestFinancialReportsValue,
+    DecisiveIndex
 )
 
 
@@ -59,17 +60,13 @@ class CompanyHistoricalQuoteSerializer(serializers.ModelSerializer):
         return obj.PriceClose * obj.DealVolume
 
     def get_LastPrice(self, obj):
-        test = self.context.get('test')
-        if not test:
-            return None
+
         Date = '2020-05-29T00:00:00Z'
         xxx = CompanyHistoricalQuote.objects.filter(Q(Date=Date) & Q(Stock_id=obj.Stock))[0]
         return xxx.PriceClose
 
     def get_PriceChange(self, obj):
-        test = self.context.get('test')
-        if not test:
-            return None
+  
         Date = '2020-05-29T00:00:00Z'
         xxx = CompanyHistoricalQuote.objects.filter(Q(Date=Date) & Q(Stock_id=obj.Stock))[0]
         return (obj.PriceClose - xxx.PriceClose)/obj.PriceClose * 100
@@ -193,3 +190,9 @@ class StockScanSerializer(serializers.ModelSerializer):
     class Meta:
         model = Stock
         fields = ['stockId']
+
+
+class DecisiveIndexSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DecisiveIndex
+        fields = '__all__'

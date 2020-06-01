@@ -28,7 +28,8 @@ from stocks.views.Stock import (
     StockAPIView,
     StockFilterAPIView,
     StockViewSet,
-    StockScanAPIView
+    StockScanAPIView,
+    DecisiveIndexViewSet
 )
 from stocks.views.company import (
     CompanyViewSet,
@@ -76,6 +77,7 @@ router = DefaultRouter()
 router.register(r'api/Note', NoteViewSet, basename='note')
 router.register(r'api2/Stock', StockViewSet, basename='stock')
 router.register(r'api/Company', CompanyViewSet, basename='company')
+router.register(r'api/DecisiveIndex', DecisiveIndexViewSet, basename='decisiveIndex')
 
 urlpatterns = router.urls
 

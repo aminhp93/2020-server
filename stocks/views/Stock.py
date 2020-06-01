@@ -13,12 +13,14 @@ from cores.models import Config
 from stocks.models import (
     Stock,
     CompanyHistoricalQuote,
-    Company
+    Company,
+    DecisiveIndex
 )
 from stocks.serializers import (
     StockSerializer,
     StockScanSerializer,
-    CompanyHistoricalQuoteSerializer
+    CompanyHistoricalQuoteSerializer,
+    DecisiveIndexSerializer
 )
 
 class StockAPIView(ListAPIView):
@@ -142,4 +144,11 @@ class StockScanAPIView(APIView):
                 .filter(TodayCapital__gt=TodayCapital)
             
             serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, many=True)
+        return Response(serializer.data)
+
+
+class DecisiveIndexViewSet(viewsets.ViewSet):
+    def list(self, request):
+        queryset = DecisiveIndex.objects.all()
+        serializer = DecisiveIndexSerializer(queryset, many=True)
         return Response(serializer.data)
