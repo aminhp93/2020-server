@@ -55,6 +55,9 @@ class CompanyHistoricalQuoteSerializer(serializers.ModelSerializer):
     TodayCapital = serializers.SerializerMethodField()
     PriceChange = serializers.SerializerMethodField()
     LastPrice = serializers.SerializerMethodField()
+    CurrentRevenue = serializers.SerializerMethodField()
+    LastRevenue = serializers.SerializerMethodField()
+    RevenueChange = serializers.SerializerMethodField()
 
     def get_TodayCapital(self, obj):
         return obj.PriceClose * obj.DealVolume
@@ -71,6 +74,38 @@ class CompanyHistoricalQuoteSerializer(serializers.ModelSerializer):
         xxx = CompanyHistoricalQuote.objects.filter(Q(Date=StartDate) & Q(Stock_id=obj.Stock))
         if len(xxx) == 1:
             return (obj.PriceClose - xxx[0].PriceClose)/obj.PriceClose * 100
+        return None
+
+    def get_CurrentRevenue(self, obj):
+        CurrentRevenue = self.context.get('CurrentRevenue')
+        if not CurrentRevenue:
+        # or obj.Stock_id != 3341:
+            return None
+        rev2019 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2019) & Q(Quarter=0) & Q(Type=2) & Q(ID=1))
+        if len(rev2019) == 1:
+            return rev2019[0].Value
+        return None
+
+    def get_LastRevenue(self, obj):
+        CurrentRevenue = self.context.get('CurrentRevenue')
+        if not CurrentRevenue:
+        # or obj.Stock_id != 3341:
+            return None
+        rev2018 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2018) & Q(Quarter=0) & Q(Type=2) & Q(ID=1))
+        if len(rev2018) == 1:
+            return rev2018[0].Value
+        return None
+
+    def get_RevenueChange(self, obj):
+        CurrentRevenue = self.context.get('CurrentRevenue')
+        if not CurrentRevenue:
+        # or obj.Stock_id != 3341:
+            return None
+        rev2019 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2019) & Q(Quarter=0) & Q(Type=2) & Q(ID=1))
+        rev2018 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2018) & Q(Quarter=0) & Q(Type=2) & Q(ID=1))
+        if len(rev2018) == 1 and len(rev2018) == 1 and rev2018[0].Value and rev2019[0].Value:
+            # print(rev2018[0].Value, rev2019[0].Value, obj.Stock_id)
+            return (rev2019[0].Value - rev2018[0].Value)/rev2018[0].Value
         return None
 
     class Meta:

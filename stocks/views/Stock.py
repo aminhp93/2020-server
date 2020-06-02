@@ -122,7 +122,7 @@ class StockScanAPIView(APIView):
                 companyHistoricalQuote = CompanyHistoricalQuote.objects\
                     .filter(Date=EndDate)\
                     .filter(Stock_id__in=[i.id for i in filteredStocks])
-                serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, context={'StartDate': StartDate}, many=True)
+                serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, context={'StartDate': StartDate, 'CurrentRevenue': True}, many=True)
             elif type == 'IsFavorite':
                 filteredStocks = Stock.objects.filter(IsFavorite=True)
                 companyHistoricalQuote = CompanyHistoricalQuote.objects\
