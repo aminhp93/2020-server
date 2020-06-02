@@ -60,16 +60,18 @@ class CompanyHistoricalQuoteSerializer(serializers.ModelSerializer):
         return obj.PriceClose * obj.DealVolume
 
     def get_LastPrice(self, obj):
-
-        Date = '2020-05-29T00:00:00Z'
-        xxx = CompanyHistoricalQuote.objects.filter(Q(Date=Date) & Q(Stock_id=obj.Stock))[0]
-        return xxx.PriceClose
+        StartDate = self.context.get('StartDate')
+        xxx = CompanyHistoricalQuote.objects.filter(Q(Date=StartDate) & Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].PriceClose
+        return None
 
     def get_PriceChange(self, obj):
-  
-        Date = '2020-05-29T00:00:00Z'
-        xxx = CompanyHistoricalQuote.objects.filter(Q(Date=Date) & Q(Stock_id=obj.Stock))[0]
-        return (obj.PriceClose - xxx.PriceClose)/obj.PriceClose * 100
+        StartDate = self.context.get('StartDate')
+        xxx = CompanyHistoricalQuote.objects.filter(Q(Date=StartDate) & Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return (obj.PriceClose - xxx[0].PriceClose)/obj.PriceClose * 100
+        return None
 
     class Meta:
         model = CompanyHistoricalQuote

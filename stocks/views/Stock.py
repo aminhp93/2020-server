@@ -107,39 +107,38 @@ class StockScanAPIView(APIView):
         Symbol = request.data.get('Symbol')
         type = request.data.get('type')
         TodayCapital = request.data.get('TodayCapital')
-        Date = request.data.get('Date')
-        Date = '2020-06-01T00:00:00Z'
-        print(TodayCapital)
+        StartDate = request.data.get('startDate')
+        EndDate = request.data.get('endDate')
         
         if Symbol:
             filteredStocks = Stock.objects.filter(Symbol__contains=Symbol)
             companyHistoricalQuote = CompanyHistoricalQuote.objects\
-                .filter(Date=Date)\
+                .filter(Date=EndDate)\
                 .filter(Stock_id__in=[i.id for i in filteredStocks])
             serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, many=True)
         elif type:
             if type == 'IsVN30':
                 filteredStocks = Stock.objects.filter(IsVN30=True)
                 companyHistoricalQuote = CompanyHistoricalQuote.objects\
-                    .filter(Date=Date)\
+                    .filter(Date=EndDate)\
                     .filter(Stock_id__in=[i.id for i in filteredStocks])
-                serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, context={'test': True}, many=True)
+                serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, context={'StartDate': StartDate}, many=True)
             elif type == 'IsFavorite':
                 filteredStocks = Stock.objects.filter(IsFavorite=True)
                 companyHistoricalQuote = CompanyHistoricalQuote.objects\
-                    .filter(Date=Date)\
+                    .filter(Date=EndDate)\
                     .filter(Stock_id__in=[i.id for i in filteredStocks])
                 serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, many=True)
             else:
                 companyHistoricalQuote = CompanyHistoricalQuote.objects\
-                    .filter(Date=Date)\
+                    .filter(Date=EndDate)\
                     .annotate(TodayCapital=F('PriceClose') * F('DealVolume'))\
                     .filter(TodayCapital__gt=TodayCapital)
                 
-                serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, many=True)
+                serializer = CompanyHistoricalQuoteSerializer(companyHistoricalQuote, context={'StartDate': StartDate}, many=True)
         else:
             companyHistoricalQuote = CompanyHistoricalQuote.objects\
-                .filter(Date=Date)\
+                .filter(Date=EndDate)\
                 .annotate(TodayCapital=F('PriceClose') * F('DealVolume'))\
                 .filter(TodayCapital__gt=TodayCapital)
             
