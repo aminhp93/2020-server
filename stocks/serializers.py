@@ -16,6 +16,20 @@ from stocks.models import (
     DecisiveIndex
 )
 
+from stocks.constants import IndustryTypeListStock, IndustryTypeConstant
+
+
+def get_industry_type(symbol):
+    if IndustryTypeListStock.TYPE_NGAN_HANG.count(symbol) > 0:
+        return IndustryTypeConstant.NGAN_HANG
+    elif IndustryTypeListStock.TYPE_BAO_HIEM.count(symbol) > 0:
+        return IndustryTypeConstant.BAO_HIEM
+    elif IndustryTypeListStock.TYPE_CHUNG_KHOAN.count(symbol) > 0:
+        return IndustryTypeConstant.CHUNG_KHOAN
+    elif IndustryTypeListStock.TYPE_QUY.count(symbol) > 0:
+        return IndustryTypeConstant.QUY
+    return IndustryTypeConstant.DEFAULT
+
 
 class StockSerializer(serializers.ModelSerializer):
     class Meta:
@@ -52,62 +66,6 @@ class CompanyOfficerSerializer(serializers.ModelSerializer):
 
 
 class CompanyHistoricalQuoteSerializer(serializers.ModelSerializer):
-    TodayCapital = serializers.SerializerMethodField()
-    PriceChange = serializers.SerializerMethodField()
-    LastPrice = serializers.SerializerMethodField()
-    CurrentRevenue = serializers.SerializerMethodField()
-    LastRevenue = serializers.SerializerMethodField()
-    RevenueChange = serializers.SerializerMethodField()
-
-    def get_TodayCapital(self, obj):
-        return obj.PriceClose * obj.DealVolume
-
-    def get_LastPrice(self, obj):
-        StartDate = self.context.get('StartDate')
-        xxx = CompanyHistoricalQuote.objects.filter(Q(Date=StartDate) & Q(Stock_id=obj.Stock))
-        if len(xxx) == 1:
-            return xxx[0].PriceClose
-        return None
-
-    def get_PriceChange(self, obj):
-        StartDate = self.context.get('StartDate')
-        xxx = CompanyHistoricalQuote.objects.filter(Q(Date=StartDate) & Q(Stock_id=obj.Stock))
-        if len(xxx) == 1:
-            return (obj.PriceClose - xxx[0].PriceClose)/obj.PriceClose * 100
-        return None
-
-    def get_CurrentRevenue(self, obj):
-        CurrentRevenue = self.context.get('CurrentRevenue')
-        if not CurrentRevenue:
-        # or obj.Stock_id != 3341:
-            return None
-        rev2019 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2019) & Q(Quarter=0) & Q(Type=2) & Q(ID=1))
-        if len(rev2019) == 1:
-            return rev2019[0].Value
-        return None
-
-    def get_LastRevenue(self, obj):
-        CurrentRevenue = self.context.get('CurrentRevenue')
-        if not CurrentRevenue:
-        # or obj.Stock_id != 3341:
-            return None
-        rev2018 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2018) & Q(Quarter=0) & Q(Type=2) & Q(ID=1))
-        if len(rev2018) == 1:
-            return rev2018[0].Value
-        return None
-
-    def get_RevenueChange(self, obj):
-        CurrentRevenue = self.context.get('CurrentRevenue')
-        if not CurrentRevenue:
-        # or obj.Stock_id != 3341:
-            return None
-        rev2019 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2019) & Q(Quarter=0) & Q(Type=2) & Q(ID=1))
-        rev2018 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2018) & Q(Quarter=0) & Q(Type=2) & Q(ID=1))
-        if len(rev2018) == 1 and len(rev2018) == 1 and rev2018[0].Value and rev2019[0].Value:
-            # print(rev2018[0].Value, rev2019[0].Value, obj.Stock_id)
-            return (rev2019[0].Value - rev2018[0].Value)/rev2018[0].Value
-        return None
-
     class Meta:
         model = CompanyHistoricalQuote
         fields = '__all__'
@@ -219,14 +177,172 @@ class AnalysisSerializer(serializers.ModelSerializer):
 
 
 class StockScanSerializer(serializers.ModelSerializer):
-    stockId = serializers.SerializerMethodField()
+    TodayCapital = serializers.SerializerMethodField()
+    PriceChange = serializers.SerializerMethodField()
+    LastPrice = serializers.SerializerMethodField()
+    CurrentRevenue = serializers.SerializerMethodField()
+    LastRevenue = serializers.SerializerMethodField()
+    RevenueChange = serializers.SerializerMethodField()
+    CurrentProfit = serializers.SerializerMethodField()
+    LastProfit = serializers.SerializerMethodField()
+    ProfitChange = serializers.SerializerMethodField()
 
-    def get_stockId(self, obj):
-        return obj.id
+    def get_TodayCapital(self, obj):
+        return obj.PriceClose * obj.DealVolume
+
+    def get_LastPrice(self, obj):
+        StartDate = self.context.get('StartDate')
+        xxx = CompanyHistoricalQuote.objects.filter(Q(Date=StartDate) & Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].PriceClose
+        return None
+
+    def get_PriceChange(self, obj):
+        StartDate = self.context.get('StartDate')
+        xxx = CompanyHistoricalQuote.objects.filter(Q(Date=StartDate) & Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return (obj.PriceClose - xxx[0].PriceClose)/obj.PriceClose * 100
+        return None
+
+    def get_CurrentRevenue(self, obj):
+        Analysis = self.context.get('Analysis')
+        if not Analysis:
+            return None
+        Symbol = Stock.objects.filter(id=obj.Stock_id)[0].Symbol
+        industryType = get_industry_type(Symbol)
+        ID = None
+        if industryType == IndustryTypeConstant.NGAN_HANG:
+            ID = 1
+        elif industryType == IndustryTypeConstant.BAO_HIEM:
+            ID = 1
+        elif industryType == IndustryTypeConstant.CHUNG_KHOAN:
+            ID = 112
+        elif industryType == IndustryTypeConstant.QUY:
+            ID = 1
+        else:
+            ID = 1
+        rev2019 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2019) & Q(Quarter=0) & Q(Type=2) & Q(ID=ID))
+        if len(rev2019) == 1:
+            return rev2019[0].Value
+        return None
+
+    def get_LastRevenue(self, obj):
+        Analysis = self.context.get('Analysis')
+        if not Analysis:
+            return None
+        Symbol = Stock.objects.filter(id=obj.Stock_id)[0].Symbol
+        industryType = get_industry_type(Symbol)
+        ID = None
+        if industryType == IndustryTypeConstant.NGAN_HANG:
+            ID = 1
+        elif industryType == IndustryTypeConstant.BAO_HIEM:
+            ID = 1
+        elif industryType == IndustryTypeConstant.CHUNG_KHOAN:
+            ID = 112
+        elif industryType == IndustryTypeConstant.QUY:
+            ID = 1
+        else:
+            ID = 1
+        rev2018 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2018) & Q(Quarter=0) & Q(Type=2) & Q(ID=ID))
+        if len(rev2018) == 1:
+            return rev2018[0].Value
+        return None
+
+    def get_RevenueChange(self, obj):
+        Analysis = self.context.get('Analysis')
+        if not Analysis:
+            return None
+        Symbol = Stock.objects.filter(id=obj.Stock_id)[0].Symbol
+        industryType = get_industry_type(Symbol)
+        ID = None
+        if industryType == IndustryTypeConstant.NGAN_HANG:
+            ID = 1
+        elif industryType == IndustryTypeConstant.BAO_HIEM:
+            ID = 1
+        elif industryType == IndustryTypeConstant.CHUNG_KHOAN:
+            ID = 112
+        elif industryType == IndustryTypeConstant.QUY:
+            ID = 1
+        else:
+            ID = 1
+        rev2019 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2019) & Q(Quarter=0) & Q(Type=2) & Q(ID=ID))
+        rev2018 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2018) & Q(Quarter=0) & Q(Type=2) & Q(ID=ID))
+        if len(rev2018) == 1 and len(rev2018) == 1 and rev2018[0].Value and rev2019[0].Value:
+            return (rev2019[0].Value - rev2018[0].Value)/rev2018[0].Value
+        return None
+
+    def get_CurrentProfit(self, obj):
+        Analysis = self.context.get('Analysis')
+        if not Analysis:
+            return None
+        Symbol = Stock.objects.filter(id=obj.Stock_id)[0].Symbol
+        industryType = get_industry_type(Symbol)
+        ID = None
+        if industryType == IndustryTypeConstant.NGAN_HANG:
+            ID = 13
+        elif industryType == IndustryTypeConstant.BAO_HIEM:
+            ID = 1
+        elif industryType == IndustryTypeConstant.CHUNG_KHOAN:
+            ID = 1101
+        elif industryType == IndustryTypeConstant.QUY:
+            ID = 1
+        else:
+            ID = 19
+
+        profit2019 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2019) & Q(Quarter=0) & Q(Type=2) & Q(ID=ID))
+        if len(profit2019) == 1:
+            return profit2019[0].Value
+        return None
+
+    def get_LastProfit(self, obj):
+        Analysis = self.context.get('Analysis')
+        if not Analysis:        
+            return None
+        Symbol = Stock.objects.filter(id=obj.Stock_id)[0].Symbol
+        industryType = get_industry_type(Symbol)
+        ID = None
+        if industryType == IndustryTypeConstant.NGAN_HANG:
+            ID = 13
+        elif industryType == IndustryTypeConstant.BAO_HIEM:
+            ID = 1
+        elif industryType == IndustryTypeConstant.CHUNG_KHOAN:
+            ID = 1101
+        elif industryType == IndustryTypeConstant.QUY:
+            ID = 1
+        else:
+            ID = 19
+
+        profit2018 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2018) & Q(Quarter=0) & Q(Type=2) & Q(ID=ID))
+        if len(profit2018) == 1:
+            return profit2018[0].Value
+        return None
+
+    def get_ProfitChange(self, obj):
+        Analysis = self.context.get('Analysis')
+        if not Analysis:
+            return None
+        Symbol = Stock.objects.filter(id=obj.Stock_id)[0].Symbol
+        industryType = get_industry_type(Symbol)
+        ID = None
+        if industryType == IndustryTypeConstant.NGAN_HANG:
+            ID = 13
+        elif industryType == IndustryTypeConstant.BAO_HIEM:
+            ID = 1
+        elif industryType == IndustryTypeConstant.CHUNG_KHOAN:
+            ID = 1101
+        elif industryType == IndustryTypeConstant.QUY:
+            ID = 1
+        else:
+            ID = 19
+        profit2019 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2019) & Q(Quarter=0) & Q(Type=2) & Q(ID=ID))
+        profit2018 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2018) & Q(Quarter=0) & Q(Type=2) & Q(ID=ID))
+        if len(profit2018) == 1 and len(profit2018) == 1 and profit2018[0].Value and profit2019[0].Value:
+            return (profit2019[0].Value - profit2018[0].Value)/profit2018[0].Value
+        return None
 
     class Meta:
-        model = Stock
-        fields = ['stockId']
+        model = CompanyHistoricalQuote
+        fields = '__all__'
 
 
 class DecisiveIndexSerializer(serializers.ModelSerializer):
