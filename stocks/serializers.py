@@ -186,6 +186,25 @@ class StockScanSerializer(serializers.ModelSerializer):
     CurrentProfit = serializers.SerializerMethodField()
     LastProfit = serializers.SerializerMethodField()
     ProfitChange = serializers.SerializerMethodField()
+    PE = serializers.SerializerMethodField()
+    PS = serializers.SerializerMethodField()
+    PB = serializers.SerializerMethodField()
+    EPS = serializers.SerializerMethodField()
+    QuickRatio = serializers.SerializerMethodField()
+    CurrentRatio = serializers.SerializerMethodField()
+    TotalDebtOverEquity = serializers.SerializerMethodField()
+    TotalDebtOverAssets = serializers.SerializerMethodField()
+    TotalAssetsTurnover = serializers.SerializerMethodField()
+    InventoryTurnover = serializers.SerializerMethodField()
+    ReceivablesTurnover = serializers.SerializerMethodField()
+    GrossMargin = serializers.SerializerMethodField()
+    OperatingMargin = serializers.SerializerMethodField()
+    EBITMargin = serializers.SerializerMethodField()
+    NetProfitMargin = serializers.SerializerMethodField()
+    ROA = serializers.SerializerMethodField()
+    ROE = serializers.SerializerMethodField()
+    ROIC = serializers.SerializerMethodField()
+
 
     def get_TodayCapital(self, obj):
         return obj.PriceClose * obj.DealVolume
@@ -340,9 +359,149 @@ class StockScanSerializer(serializers.ModelSerializer):
             return (profit2019[0].Value - profit2018[0].Value)/profit2018[0].Value
         return None
 
+    def get_PE(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].PE
+        return None
+
+    def get_PS(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].PS
+        return None
+
+    def get_PB(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].PB
+        return None
+
+    def get_EPS(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].EPS
+        return None
+
+    def get_QuickRatio(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].QuickRatio
+        return None
+
+    def get_CurrentRatio(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].CurrentRatio
+        return None
+
+    def get_TotalDebtOverEquity(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].TotalDebtOverEquity
+        return None
+
+    def get_TotalDebtOverAssets(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].TotalDebtOverAssets
+        return None
+
+    def get_TotalAssetsTurnover(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].TotalAssetsTurnover
+        return None
+
+    def get_InventoryTurnover(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].InventoryTurnover
+        return None
+
+    def get_ReceivablesTurnover(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].ReceivablesTurnover
+        return None
+
+    def get_GrossMargin(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].GrossMargin
+        return None
+
+    def get_OperatingMargin(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].OperatingMargin
+        return None
+
+    def get_EBITMargin(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].EBITMargin
+        return None
+
+
+    def get_NetProfitMargin(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].NetProfitMargin
+        return None
+
+    def get_ROA(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].ROA
+        return None
+
+    def get_ROE(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].ROE
+        return None
+
+    def get_ROIC(self, obj):
+        xxx = LatestFinancialInfo.objects.filter(Q(Stock_id=obj.Stock))
+        if len(xxx) == 1:
+            return xxx[0].ROIC
+        return None
+
     class Meta:
         model = CompanyHistoricalQuote
-        fields = '__all__'
+        fields = [
+            'Stock',
+            'TodayCapital',
+            'PriceChange',
+            'LastPrice',
+            'CurrentRevenue',
+            'LastRevenue',
+            'RevenueChange',
+            'CurrentProfit',
+            'LastProfit',
+            'ProfitChange',
+            'DealVolume',
+            'PriceClose',
+            'PE',
+            'PS',
+            'PB',
+            'EPS',
+            'QuickRatio',
+            'CurrentRatio',
+            'TotalDebtOverEquity',
+            'TotalDebtOverAssets',
+            'TotalAssetsTurnover',
+            'InventoryTurnover',
+            'ReceivablesTurnover',
+            'GrossMargin',
+            'OperatingMargin',
+            'EBITMargin',
+            'NetProfitMargin',
+            'ROA',
+            'ROE',
+            'ROIC'
+        ]
 
 
 class DecisiveIndexSerializer(serializers.ModelSerializer):

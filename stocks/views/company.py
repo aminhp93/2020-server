@@ -96,7 +96,6 @@ class CompanyUpdateAPIView(UpdateAPIView):
 class CompanyInfoFilterAPIView(APIView):
     def post(self, request, *args, **kwargs):
         symbols = request.data.get('symbols')
-        print(2)
         if not symbols:
             return Response({'Error': 'No symbols'})
         

@@ -47,6 +47,7 @@ from stocks.views.company import (
 from stocks.views.HistoricalQuote import HistoricalQuoteAPIView
 from stocks.views.Finance import (
     LatestFinancialInfoRetrieveAPIView,
+    LatestFinancialInfoViewSet,
     LatestFinancialInfoUpdateAPIView,
     LatestFinancialInfoFilterAPIView,
     YearlyFinancialInfoRetrieveAPIView,
@@ -78,6 +79,7 @@ router.register(r'api/Note', NoteViewSet, basename='note')
 router.register(r'api2/Stock', StockViewSet, basename='stock')
 router.register(r'api/Company', CompanyViewSet, basename='company')
 router.register(r'api/DecisiveIndex', DecisiveIndexViewSet, basename='decisiveIndex')
+router.register(r'api/LatestFinancialInfo', LatestFinancialInfoViewSet, basename='latestFinancialInfo')
 
 urlpatterns = router.urls
 

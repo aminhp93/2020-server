@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.views import APIView
 
 from stocks.serializers import (
@@ -57,12 +57,34 @@ def get_industry_type(symbol):
 
 class LatestFinancialInfoRetrieveAPIView(RetrieveAPIView):
     def get(self, request, *args, **kwargs):
-        Symbol = request.GET.get('symbol')
-        result = LatestFinancialInfo.objects.filter(Symbol=Symbol)
+        StockId = request.GET.get('stockId')
+        result = LatestFinancialInfo.objects.filter(Stock_id=StockId)
         if result.count() != 1:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
         serializer = LatestFinancialInfoSerializer(result[0])
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class LatestFinancialInfoViewSet(viewsets.ViewSet):
+    def list(self, request):
+        queryset = LatestFinancialInfo.objects.all()
+        serializer = LatestFinancialInfoSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        instance = get_object_or_404(LatestFinancialInfo, pk=pk)
+        serializer = LatestFinancialInfoSerializer(instance)
+        return Response(serializer.data)
+
+    def update(self, request, pk=None):
+        pass
+
+    def partial_update(self, request, pk=None):
+        instance = get_object_or_404(LatestFinancialInfo, pk=pk)
+        serializer = LatestFinancialInfoSerializer(LatestFinancialInfo, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 class LatestFinancialInfoUpdateAPIView(UpdateAPIView):
@@ -92,12 +114,16 @@ class LatestFinancialInfoUpdateAPIView(UpdateAPIView):
         if not data or response.status_code != 200:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
 
-        LatestFinancialInfo.objects.filter(Symbol=Symbol).delete()
+        filteredStock = Stock.objects.filter(Symbol=Symbol)
+        if filteredStock.count() != 1:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+        LatestFinancialInfo.objects.filter(Stock_id=filteredStock[0].id).delete()
         
         serializer = LatestFinancialInfoSerializer(data=data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        serializer.save()
+        serializer.save(Stock=filteredStock[0])
         return Response(serializer.data, status = status.HTTP_201_CREATED)
 
 

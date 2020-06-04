@@ -80,7 +80,7 @@ class SubCompany(TimeStampedModel):
 
 
 class LatestFinancialInfo(TimeStampedModel):
-    Symbol = models.CharField(_('Symbol'), max_length=255, blank=True, unique=True, null=False) # "AAV"
+    Stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None, related_name='stock_lastestFinancialInfo')
     LFY = models.CharField(_('LFY'), max_length=255, blank=True, null=True) # 2019
     Year = models.CharField(_('Year'), max_length=255, blank=True, null=True) # 2019
     Quarter = models.CharField(_('Quarter'), max_length=255, blank=True, null=True) # 4
@@ -220,9 +220,6 @@ class LatestFinancialInfo(TimeStampedModel):
         ordering = ('-created', '-id',)
         verbose_name = _('LatestFinancialInfo')
         verbose_name_plural = _('LatestFinancialInfo')
-
-    def __str__(self):
-        return 'LatestFinancialInfo-{}-{}'.format(self.Symbol, self.Date)
 
 
 class IntradayQuote(TimeStampedModel):
