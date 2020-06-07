@@ -500,7 +500,8 @@ class StockScanSerializer(serializers.ModelSerializer):
             'NetProfitMargin',
             'ROA',
             'ROE',
-            'ROIC'
+            'ROIC',
+            'MarketCap'
         ]
 
 
