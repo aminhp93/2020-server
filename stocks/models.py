@@ -10,6 +10,7 @@ class Stock(TimeStampedModel):
     Exchange = models.CharField(_('Exchange'), max_length=255, blank=True, null=False)
     IsVN30 = models.BooleanField(_('IsVN30'), default=False)
     IsFavorite = models.BooleanField(_('IsFavorite'), default=False)
+    IsBlackList = models.BooleanField(_('IsBlackList'), default=False)
 
 
 class Company(TimeStampedModel):
