@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import requests
 from rest_framework.generics import ListAPIView
@@ -104,44 +105,31 @@ class StockViewSet(viewsets.ViewSet):
 
 class StockScanAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        Symbol = request.data.get('Symbol')
-        type = request.data.get('type')
-        TodayCapital = request.data.get('TodayCapital')
-        StartDate = request.data.get('startDate')
-        EndDate = request.data.get('endDate')
+        today = datetime.today().strftime('%Y-%m-%d') + 'T00:00:00Z'
+
+        Symbol = request.data.get('Symbol', '')
+        TodayCapital = request.data.get('TodayCapital', 5000000000)
+        StartDate = request.data.get('startDate', today)
+        EndDate = request.data.get('endDate', today)
         MinPrice = request.data.get('MinPrice', 0)
+        IsVN30 = request.data.get('IsVN30', False)
+        IsFavorite = request.data.get('IsFavorite', False)
         IsBlackList = request.data.get('IsBlackList', False)
+        ICBCode = request.data.get('ICBCode')
         
-        if Symbol:
-            filteredStocks = Stock.objects.filter(Symbol__contains=Symbol)
-            companyHistoricalQuote = CompanyHistoricalQuote.objects\
-                .filter(Date=EndDate)\
-                .filter(Stock_id__in=[i.id for i in filteredStocks])
-            serializer = StockScanSerializer(companyHistoricalQuote, many=True)
-        else:
-            if type == 'IsVN30':
-                filteredStocks = Stock.objects.filter(Q(IsVN30=True) & Q(IsBlackList=IsBlackList))
-                companyHistoricalQuote = CompanyHistoricalQuote.objects\
-                    .filter(Date=EndDate)\
-                    .filter(Stock_id__in=[i.id for i in filteredStocks])
-                serializer = StockScanSerializer(companyHistoricalQuote, context={'StartDate': StartDate, 'Analysis': True}, many=True)
-            elif type == 'IsFavorite':
-                filteredStocks = Stock.objects.filter(Q(IsFavorite=True) & Q(IsBlackList=IsBlackList))
-                companyHistoricalQuote = CompanyHistoricalQuote.objects\
-                    .filter(Date=EndDate)\
-                    .filter(Stock_id__in=[i.id for i in filteredStocks])
-                serializer = StockScanSerializer(companyHistoricalQuote, many=True)
-            else:
-                filteredStocks = Stock.objects.filter(IsBlackList=IsBlackList)
-                companyHistoricalQuote = CompanyHistoricalQuote.objects\
-                    .filter(Stock_id__in=[i.id for i in filteredStocks])\
-                    .filter(Date=EndDate)\
-                    .annotate(TodayCapital=F('PriceClose') * F('DealVolume'))\
-                    .filter(TodayCapital__gt=TodayCapital)\
-                    .filter(PriceClose__gt=MinPrice)
-                
-                serializer = StockScanSerializer(companyHistoricalQuote, context={'StartDate': StartDate, 'Analysis': True}, many=True)
-      
+        filteredStocks = Stock.objects.filter(Q(IsVN30=IsVN30) & Q(IsFavorite=IsFavorite) & Q(IsBlackList=IsBlackList) & Q(Symbol__contains=Symbol))
+        if ICBCode:
+            filteredStocks = filteredStocks.filter(stock_company__ICBCode=ICBCode)
+          
+        companyHistoricalQuote = CompanyHistoricalQuote.objects\
+            .filter(Stock_id__in=[i.id for i in filteredStocks])\
+            .filter(Date=EndDate)\
+            .filter(PriceClose__gt=MinPrice)\
+            .annotate(TodayCapital=F('PriceClose') * F('DealVolume'))\
+            .filter(TodayCapital__gt=TodayCapital)
+        
+        serializer = StockScanSerializer(companyHistoricalQuote, context={'StartDate': StartDate, 'Analysis': True}, many=True)
+
         return Response(serializer.data)
 
 
