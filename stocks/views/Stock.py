@@ -117,9 +117,12 @@ class StockScanAPIView(APIView):
         IsBlackList = request.data.get('IsBlackList', False)
         ICBCode = request.data.get('ICBCode')
         
-        filteredStocks = Stock.objects.filter(Q(IsVN30=IsVN30) & Q(IsFavorite=IsFavorite) & Q(IsBlackList=IsBlackList) & Q(Symbol__contains=Symbol))
-        if ICBCode:
-            filteredStocks = filteredStocks.filter(stock_company__ICBCode=ICBCode)
+        if Symbol:
+            filteredStocks = Stock.objects.filter(Symbol__contains=Symbol)
+        else:
+            filteredStocks = Stock.objects.filter(Q(IsVN30=IsVN30) & Q(IsFavorite=IsFavorite) & Q(IsBlackList=IsBlackList))
+            if ICBCode:
+                filteredStocks = filteredStocks.filter(stock_company__ICBCode=ICBCode)
           
         companyHistoricalQuote = CompanyHistoricalQuote.objects\
             .filter(Stock_id__in=[i.id for i in filteredStocks])\
