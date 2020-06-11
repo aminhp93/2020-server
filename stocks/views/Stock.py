@@ -116,6 +116,7 @@ class StockScanAPIView(APIView):
         IsFavorite = request.data.get('IsFavorite', False)
         IsBlackList = request.data.get('IsBlackList', False)
         ICBCode = request.data.get('ICBCode')
+        ChangePrice = request.data.get('ChangePrice')
         
         if Symbol:
             filteredStocks = Stock.objects.filter(Symbol__contains=Symbol)
@@ -123,14 +124,32 @@ class StockScanAPIView(APIView):
             filteredStocks = Stock.objects.filter(Q(IsVN30=IsVN30) & Q(IsFavorite=IsFavorite) & Q(IsBlackList=IsBlackList))
             if ICBCode:
                 filteredStocks = filteredStocks.filter(stock_company__ICBCode=ICBCode)
-          
+        
+
         companyHistoricalQuote = CompanyHistoricalQuote.objects\
             .filter(Stock_id__in=[i.id for i in filteredStocks])\
             .filter(Date=EndDate)\
             .filter(PriceClose__gt=MinPrice)\
             .annotate(TodayCapital=F('PriceClose') * F('DealVolume'))\
             .filter(TodayCapital__gt=TodayCapital)
-        
+
+        if ChangePrice:
+            dic1 = CompanyHistoricalQuote.objects\
+                .filter(Stock_id__in=[i.Stock_id for i in companyHistoricalQuote])\
+                .filter(Date=EndDate)
+
+            dic2 = CompanyHistoricalQuote.objects\
+                .filter(Stock_id__in=[i.Stock_id for i in companyHistoricalQuote])\
+                .filter(Date=StartDate)
+            
+            result = []
+            for i in dic1:
+                start = dic2.filter(Stock_id=i.Stock_id)
+                if len(start) == 1:
+                    if (i.PriceClose - start[0].PriceClose)/ start[0].PriceClose * 100 > ChangePrice:
+                        result.append(i.Stock_id)
+            companyHistoricalQuote = companyHistoricalQuote.filter(Stock_id__in=[i for i in result])
+
         serializer = StockScanSerializer(companyHistoricalQuote, context={'StartDate': StartDate, 'Analysis': True}, many=True)
 
         return Response(serializer.data)
