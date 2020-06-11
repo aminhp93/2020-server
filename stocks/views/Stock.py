@@ -133,7 +133,7 @@ class StockScanAPIView(APIView):
             .annotate(TodayCapital=F('PriceClose') * F('DealVolume'))\
             .filter(TodayCapital__gt=TodayCapital)
 
-        if ChangePrice:
+        if ChangePrice and not Symbol:
             dic1 = CompanyHistoricalQuote.objects\
                 .filter(Stock_id__in=[i.Stock_id for i in companyHistoricalQuote])\
                 .filter(Date=EndDate)
