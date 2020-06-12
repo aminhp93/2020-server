@@ -23,6 +23,7 @@ from stocks.serializers import (
     CompanyHistoricalQuoteSerializer,
     DecisiveIndexSerializer
 )
+# from stocks.filters import StockFilter
 
 class StockAPIView(ListAPIView):
     serializer_class = StockSerializer
@@ -104,6 +105,8 @@ class StockViewSet(viewsets.ViewSet):
 
 
 class StockScanAPIView(APIView):
+    # filterset_class = StockFilter
+
     def post(self, request, *args, **kwargs):
         today = datetime.today().strftime('%Y-%m-%d') + 'T00:00:00Z'
 
@@ -117,7 +120,8 @@ class StockScanAPIView(APIView):
         IsBlackList = request.data.get('IsBlackList', False)
         ICBCode = request.data.get('ICBCode')
         ChangePrice = request.data.get('ChangePrice')
-        
+        # xxx = StockFilter(request.data, queryset=Stock.objects.all())
+        # print(xxx.qs)
         if Symbol:
             filteredStocks = Stock.objects.filter(Symbol__contains=Symbol)
         else:
