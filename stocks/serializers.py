@@ -286,7 +286,7 @@ class StockScanSerializer(serializers.ModelSerializer):
             ID = 1
         rev2019 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2019) & Q(Quarter=0) & Q(Type=2) & Q(ID=ID))
         rev2018 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2018) & Q(Quarter=0) & Q(Type=2) & Q(ID=ID))
-        if len(rev2018) == 1 and len(rev2018) == 1 and rev2018[0].Value and rev2019[0].Value:
+        if len(rev2018) == 1 and len(rev2019) == 1 and rev2018[0].Value and rev2019[0].Value:
             return (rev2019[0].Value - rev2018[0].Value)/rev2018[0].Value
         return None
 
@@ -355,7 +355,7 @@ class StockScanSerializer(serializers.ModelSerializer):
             ID = 19
         profit2019 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2019) & Q(Quarter=0) & Q(Type=2) & Q(ID=ID))
         profit2018 = LastestFinancialReportsValue.objects.filter(Q(Stock_id=obj.Stock) & Q(Year=2018) & Q(Quarter=0) & Q(Type=2) & Q(ID=ID))
-        if len(profit2018) == 1 and len(profit2018) == 1 and profit2018[0].Value and profit2019[0].Value:
+        if len(profit2018) == 1 and len(profit2019) == 1 and profit2018[0].Value and profit2019[0].Value:
             return (profit2019[0].Value - profit2018[0].Value)/profit2018[0].Value
         return None
 

@@ -121,10 +121,14 @@ class StockScanAPIView(APIView):
         if Symbol:
             filteredStocks = Stock.objects.filter(Symbol__contains=Symbol)
         else:
-            filteredStocks = Stock.objects.filter(Q(IsVN30=IsVN30) & Q(IsFavorite=IsFavorite) & Q(IsBlackList=IsBlackList))
+            if IsVN30:
+                filteredStocks = Stock.objects.filter(Q(IsVN30=IsVN30) & Q(IsFavorite=IsFavorite) & Q(IsBlackList=IsBlackList))
+            else:
+                filteredStocks = Stock.objects.filter(Q(IsFavorite=IsFavorite) & Q(IsBlackList=IsBlackList))
+            
             if ICBCode:
                 filteredStocks = filteredStocks.filter(stock_company__ICBCode=ICBCode)
-        
+
 
         companyHistoricalQuote = CompanyHistoricalQuote.objects\
             .filter(Stock_id__in=[i.id for i in filteredStocks])\
@@ -132,7 +136,7 @@ class StockScanAPIView(APIView):
             .filter(PriceClose__gt=MinPrice)\
             .annotate(TodayCapital=F('PriceClose') * F('DealVolume'))\
             .filter(TodayCapital__gt=TodayCapital)
-
+     
         if ChangePrice and not Symbol:
             dic1 = CompanyHistoricalQuote.objects\
                 .filter(Stock_id__in=[i.Stock_id for i in companyHistoricalQuote])\
