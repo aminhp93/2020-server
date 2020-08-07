@@ -280,7 +280,7 @@ class CompanyHistoricalQuoteUpdateAPIView(UpdateAPIView):
         if not Symbol or not startDate or not endDate:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
         
-        url = 'https://svr3.fireant.vn/api/Data/Companies/HistoricalQuotes'
+        url = 'https://svr1.fireant.vn/api/Data/Companies/HistoricalQuotes'
 
         querystring = {
             "symbol": Symbol,
