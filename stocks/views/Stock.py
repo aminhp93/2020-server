@@ -120,15 +120,18 @@ class StockScanAPIView(APIView):
         IsBlackList = request.data.get('IsBlackList', False)
         ICBCode = request.data.get('ICBCode')
         ChangePrice = request.data.get('ChangePrice')
-        # xxx = StockFilter(request.data, queryset=Stock.objects.all())
-        # print(xxx.qs)
+
         if Symbol:
             filteredStocks = Stock.objects.filter(Symbol__contains=Symbol)
         else:
             if IsVN30:
-                filteredStocks = Stock.objects.filter(Q(IsVN30=IsVN30) & Q(IsFavorite=IsFavorite) & Q(IsBlackList=IsBlackList))
+                filteredStocks = Stock.objects.filter(Q(IsVN30=True) & Q(IsBlackList=False))
+            elif IsFavorite:
+                filteredStocks = Stock.objects.filter(Q(IsFavorite=True) & Q(IsBlackList=False))
+            elif IsBlackList:
+                filteredStocks = Stock.objects.filter(IsBlackList=True)
             else:
-                filteredStocks = Stock.objects.filter(Q(IsFavorite=IsFavorite) & Q(IsBlackList=IsBlackList))
+                filteredStocks = Stock.objects.filter(IsBlackList=False)
             
             if ICBCode:
                 filteredStocks = filteredStocks.filter(stock_company__ICBCode=ICBCode)
