@@ -8,10 +8,14 @@ from .constants import LastestFinancialReports, IndustryTypeConstant
 class Stock(TimeStampedModel):
     Symbol = models.CharField(_('Symbol'), max_length=255, blank=True, unique=True, null=False)
     Exchange = models.CharField(_('Exchange'), max_length=255, blank=True, null=False)
+    IsVN30 = models.BooleanField(_('IsVN30'), default=False)
+    IsFavorite = models.BooleanField(_('IsFavorite'), default=False)
+    IsBlackList = models.BooleanField(_('IsBlackList'), default=False)
+    Note = models.TextField(_('Note'), blank=True, null=True) 
 
 
 class Company(TimeStampedModel):
-    Symbol = models.CharField(_('ICBCode'), max_length=255, blank=True, unique=True, null=False) # "FPT"
+    Stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None, related_name='stock_company')
     ICBCode = models.CharField(_('ICBCode'), max_length=255, blank=True, null=True) # "9537"
     CompanyName = models.CharField(_('CompanyName'), max_length=255, blank=True, null=True) # "CTCP FPT"
     ShortName = models.CharField(_('ShortName'), max_length=255, blank=True, null=True) # "FPT Corp"
@@ -78,7 +82,7 @@ class SubCompany(TimeStampedModel):
 
 
 class LatestFinancialInfo(TimeStampedModel):
-    Symbol = models.CharField(_('Symbol'), max_length=255, blank=True, unique=True, null=False) # "AAV"
+    Stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None, related_name='stock_lastestFinancialInfo')
     LFY = models.CharField(_('LFY'), max_length=255, blank=True, null=True) # 2019
     Year = models.CharField(_('Year'), max_length=255, blank=True, null=True) # 2019
     Quarter = models.CharField(_('Quarter'), max_length=255, blank=True, null=True) # 4
@@ -218,9 +222,6 @@ class LatestFinancialInfo(TimeStampedModel):
         ordering = ('-created', '-id',)
         verbose_name = _('LatestFinancialInfo')
         verbose_name_plural = _('LatestFinancialInfo')
-
-    def __str__(self):
-        return 'LatestFinancialInfo-{}-{}'.format(self.Symbol, self.Date)
 
 
 class IntradayQuote(TimeStampedModel):
@@ -531,4 +532,12 @@ class CompanyHistoricalQuote(TimeStampedModel):
     def __str__(self):
         return 'CompanyHistoricalQuote-{}-{}'.format(self.Stock_id, self.Date)
 
-    
+class DecisiveIndex(TimeStampedModel):
+    Stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None, related_name='stock_decisive_index')
+    LowestPoint = models.FloatField(_('LowestPoint'), blank=True, null=True)
+    SellPoint = models.FloatField(_('SellPoint'), blank=True, null=True)
+
+    class Meta:
+        ordering = ('-created', '-id',)
+        verbose_name = _('DecisiveIndex')
+        verbose_name_plural = _('DecisiveIndexes')

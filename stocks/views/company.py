@@ -3,6 +3,7 @@ import requests
 from django.http import JsonResponse
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from rest_framework import viewsets
 from rest_framework.generics import (
     CreateAPIView,
     ListAPIView,
@@ -16,6 +17,7 @@ from rest_framework.views import APIView
 
 from stocks.serializers import (
     CompanySerializer,
+    CompanyListSerializer,
     SubCompanySerializer,
     CompanyOfficerSerializer,
     CompanyTransactionSerializer,
@@ -30,14 +32,26 @@ from stocks.models import (
     CompanyHistoricalQuote
 )
 
-class CompanyListAPIView(RetrieveAPIView):
-    def get(self, request, *args, **kwargs):
-        Symbol = request.GET.get('symbol')
-        result = Company.objects.filter(Symbol=Symbol)
-        if result.count() != 1:
-            return Response(None, status=status.HTTP_404_NOT_FOUND)
-        serializer = CompanySerializer(result[0])
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+class CompanyViewSet(viewsets.ViewSet):
+    def list(self, request):
+        queryset = Company.objects.all()
+        serializer = CompanyListSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        company = get_object_or_404(Company, pk=pk)
+        serializer = CompanySerializer(company)
+        return Response(serializer.data)
+
+    def update(self, request, pk=None):
+        pass
+
+    def partial_update(self, request, pk=None):
+        company = get_object_or_404(Company, pk=pk)
+        serializer = CompanySerializer(company, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 class CompanyUpdateAPIView(UpdateAPIView):
@@ -46,6 +60,7 @@ class CompanyUpdateAPIView(UpdateAPIView):
 
     def put(self, request, *args, **kwargs):
         Symbol = request.GET.get('symbol')
+
         if not Symbol:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
         url = "https://svr1.fireant.vn/api/Data/Companies/CompanyInfo"
@@ -59,20 +74,28 @@ class CompanyUpdateAPIView(UpdateAPIView):
         }
 
         response = requests.request("GET", url, headers=headers, params=querystring)        
+
+        data = response.json()
+
+        if not data or response.status_code != 200:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+    
+        filteredStock = Stock.objects.filter(Symbol=Symbol)
+        if filteredStock.count() != 1:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
         
-        Company.objects.filter(Symbol=Symbol).delete()
+        Company.objects.filter(Stock_id=filteredStock[0].id).delete()
         
         serializer = CompanySerializer(data=response.json())
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        serializer.save()
+        serializer.save(Stock=filteredStock[0])
         return Response(serializer.data, status = status.HTTP_201_CREATED)
 
 
 class CompanyInfoFilterAPIView(APIView):
     def post(self, request, *args, **kwargs):
         symbols = request.data.get('symbols')
-        print(2)
         if not symbols:
             return Response({'Error': 'No symbols'})
         
@@ -257,7 +280,7 @@ class CompanyHistoricalQuoteUpdateAPIView(UpdateAPIView):
         if not Symbol or not startDate or not endDate:
             return Response({}, status=status.HTTP_404_NOT_FOUND)
         
-        url = 'https://svr3.fireant.vn/api/Data/Companies/HistoricalQuotes'
+        url = 'https://svr1.fireant.vn/api/Data/Companies/HistoricalQuotes'
 
         querystring = {
             "symbol": Symbol,

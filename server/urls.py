@@ -26,10 +26,13 @@ from cores.views import (
 )
 from stocks.views.Stock import (
     StockAPIView,
-    StockFilterAPIView
+    StockFilterAPIView,
+    StockViewSet,
+    StockScanAPIView,
+    DecisiveIndexViewSet
 )
 from stocks.views.company import (
-    CompanyListAPIView,
+    CompanyViewSet,
     CompanyUpdateAPIView,
     CompanyInfoFilterAPIView,
     SubCompanyAPIView,
@@ -44,6 +47,7 @@ from stocks.views.company import (
 from stocks.views.HistoricalQuote import HistoricalQuoteAPIView
 from stocks.views.Finance import (
     LatestFinancialInfoRetrieveAPIView,
+    LatestFinancialInfoViewSet,
     LatestFinancialInfoUpdateAPIView,
     LatestFinancialInfoFilterAPIView,
     YearlyFinancialInfoRetrieveAPIView,
@@ -72,6 +76,10 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 
 router.register(r'api/Note', NoteViewSet, basename='note')
+router.register(r'api2/Stock', StockViewSet, basename='stock')
+router.register(r'api/Company', CompanyViewSet, basename='company')
+router.register(r'api/DecisiveIndex', DecisiveIndexViewSet, basename='decisiveIndex')
+router.register(r'api/LatestFinancialInfo', LatestFinancialInfoViewSet, basename='latestFinancialInfo')
 
 urlpatterns = router.urls
 
@@ -87,7 +95,7 @@ urlpatterns = router.urls + [
     # 
     path('api/Data/Markets/TradingStatistic/', StockAPIView.as_view()),
     # 
-    path('api/Data/Companies/CompanyInfo/', CompanyListAPIView.as_view()),
+    # path('api/Data/Companies/CompanyInfo/', CompanyListAPIView.as_view()),
     path('api/Data/Companies/CompanyInfo/update/', CompanyUpdateAPIView.as_view()),
     path('api/Data/Companies/CompanyInfo/filter/', CompanyInfoFilterAPIView.as_view()),
     path('api/Data/Companies/SubCompanies/', SubCompanyAPIView.as_view()),
@@ -115,6 +123,7 @@ urlpatterns = router.urls + [
 
     path('api/Analysis/', AnalysisListAPIView.as_view()),
     path('api/Stock/Filter/', StockFilterAPIView.as_view()),
+    path('api/Stock/scan/', StockScanAPIView.as_view()),
     path('api/Stock/News/', StockNewsAPIView.as_view()),
     #
     path('api/Data/News/AllNews', AllNewsApiView.as_view()),
