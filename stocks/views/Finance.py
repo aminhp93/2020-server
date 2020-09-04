@@ -247,7 +247,7 @@ class QuarterlyFinancialInfoUpdateAPIView(UpdateAPIView):
             "symbol": Symbol,
             "fromYear": "2016",
             "fromQuarter": "1",
-            "toYear": "2019",
+            "toYear": "2020",
             "toQuarter": "4"
         }
 
