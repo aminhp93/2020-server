@@ -11,6 +11,7 @@ class Stock(TimeStampedModel):
     IsVN30 = models.BooleanField(_('IsVN30'), default=False)
     IsFavorite = models.BooleanField(_('IsFavorite'), default=False)
     IsBlackList = models.BooleanField(_('IsBlackList'), default=False)
+    IsStrong = models.BooleanField(_('IsStrong'), default=True)
     Note = models.TextField(_('Note'), blank=True, null=True) 
 
 

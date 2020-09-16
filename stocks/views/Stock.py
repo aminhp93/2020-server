@@ -120,23 +120,40 @@ class StockScanAPIView(APIView):
         IsBlackList = request.data.get('IsBlackList', False)
         ICBCode = request.data.get('ICBCode')
         ChangePrice = request.data.get('ChangePrice')
+        checkBlackList = request.data.get('checkBlackList')
+        checkStrong = request.data.get('checkStrong')
 
         if Symbol:
             filteredStocks = Stock.objects.filter(Symbol__contains=Symbol)
         else:
             if IsVN30:
-                filteredStocks = Stock.objects.filter(Q(IsVN30=True) & Q(IsBlackList=False))
+                if checkBlackList:
+                    filteredStocks = Stock.objects.filter(Q(IsVN30=True) & Q(IsBlackList=False))
+                else:
+                    filteredStocks = Stock.objects.filter(IsVN30=True)
             elif IsFavorite:
-                filteredStocks = Stock.objects.filter(Q(IsFavorite=True) & Q(IsBlackList=False))
+                if checkBlackList:
+                    filteredStocks = Stock.objects.filter(Q(IsFavorite=True) & Q(IsBlackList=False))
+                else:
+                    filteredStocks = Stock.objects.filter(IsFavorite=True)
             elif IsBlackList:
                 filteredStocks = Stock.objects.filter(IsBlackList=True)
             else:
-                filteredStocks = Stock.objects.filter(IsBlackList=False)
+
+                if checkStrong and checkBlackList:
+                    filteredStocks = Stock.objects.filter(Q(IsBlackList=False) & Q(IsStrong=True))
+                elif checkStrong:
+                    filteredStocks = Stock.objects.filter(IsStrong=True)
+                elif checkBlackList:
+                    filteredStocks = Stock.objects.filter(IsBlackList=False)
+                else:
+                    filteredStocks = Stock.objects.all()
+
             
             if ICBCode:
                 filteredStocks = filteredStocks.filter(stock_company__ICBCode=ICBCode)
 
-
+        
         companyHistoricalQuote = CompanyHistoricalQuote.objects\
             .filter(Stock_id__in=[i.id for i in filteredStocks])\
             .filter(Date=EndDate)\
