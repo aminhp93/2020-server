@@ -12,6 +12,7 @@ class Stock(TimeStampedModel):
     IsFavorite = models.BooleanField(_('IsFavorite'), default=False)
     IsBlackList = models.BooleanField(_('IsBlackList'), default=False)
     IsStrong = models.BooleanField(_('IsStrong'), default=True)
+    IsOnStudy = models.BooleanField(_('IsOnStudy'), default=False)
     Note = models.TextField(_('Note'), blank=True, null=True) 
 
 

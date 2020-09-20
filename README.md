@@ -1,3 +1,4 @@
-2020 Backend API deployed to AWS
-1
-1
+Command
+
+<!-- Update list strong stock -->
+poetry run python manage.py update_strong_stock

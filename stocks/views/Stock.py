@@ -122,6 +122,7 @@ class StockScanAPIView(APIView):
         ChangePrice = request.data.get('ChangePrice')
         checkBlackList = request.data.get('checkBlackList')
         checkStrong = request.data.get('checkStrong')
+        IsOnStudy = request.data.get('IsOnStudy', False)
 
         if Symbol:
             filteredStocks = Stock.objects.filter(Symbol__contains=Symbol)
@@ -136,6 +137,8 @@ class StockScanAPIView(APIView):
                     filteredStocks = Stock.objects.filter(Q(IsFavorite=True) & Q(IsBlackList=False))
                 else:
                     filteredStocks = Stock.objects.filter(IsFavorite=True)
+            elif IsOnStudy:
+                filteredStocks = Stock.objects.filter(IsOnStudy=True)
             elif IsBlackList:
                 filteredStocks = Stock.objects.filter(IsBlackList=True)
             else:
