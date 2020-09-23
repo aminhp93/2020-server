@@ -71,7 +71,7 @@ class Command(BaseCommand):
 
         # print(len(result))
 
-        queryset = Q(id__in=result) & Q(IsStrong=True)
+        queryset = Q(id__in=result)
 
         a = Stock.objects.filter(queryset)
         b = Stock.objects.exclude(queryset)
@@ -101,7 +101,7 @@ class Command(BaseCommand):
                 .values('Stock', 'MarketCap')
             marketCap = list(marketCap)
             marketCap = sorted(marketCap, key=lambda i: i["MarketCap"], reverse=True)
-            x = slice(5)
+            x = slice(10)
             
             h = marketCap[x]
             j = [i["Stock"] for i in h]

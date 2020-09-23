@@ -204,6 +204,10 @@ class StockScanSerializer(serializers.ModelSerializer):
     ROA = serializers.SerializerMethodField()
     ROE = serializers.SerializerMethodField()
     ROIC = serializers.SerializerMethodField()
+    LastQuarterRev = serializers.SerializerMethodField()
+    LastQuarterProfit = serializers.SerializerMethodField()
+    CurrentQuarterRev = serializers.SerializerMethodField()
+    CurrentQuarterProfit = serializers.SerializerMethodField()
 
 
     def get_TodayCapital(self, obj):
@@ -468,6 +472,30 @@ class StockScanSerializer(serializers.ModelSerializer):
             return xxx[0].ROIC
         return None
 
+    def get_LastQuarterRev(self, obj):
+        xxx = QuarterlyFinancialInfo.objects.filter(Q(Stock_id=obj.Stock) & Q(Quarter=2) & Q(Year=2019))
+        if len(xxx) == 1:
+            return xxx[0].NetSales_MRQ
+        return None
+
+    def get_LastQuarterProfit(self, obj):
+        xxx = QuarterlyFinancialInfo.objects.filter(Q(Stock_id=obj.Stock) & Q(Quarter=2) & Q(Year=2019))
+        if len(xxx) == 1:
+            return xxx[0].ProfitAfterTax_MRQ
+        return None
+
+    def get_CurrentQuarterRev(self, obj):
+        xxx = QuarterlyFinancialInfo.objects.filter(Q(Stock_id=obj.Stock) & Q(Quarter=2) & Q(Year=2020))
+        if len(xxx) == 1:
+            return xxx[0].NetSales_MRQ
+        return None
+
+    def get_CurrentQuarterProfit(self, obj):
+        xxx = QuarterlyFinancialInfo.objects.filter(Q(Stock_id=obj.Stock) & Q(Quarter=2) & Q(Year=2020))
+        if len(xxx) == 1:
+            return xxx[0].ProfitAfterTax_MRQ
+        return None
+
     class Meta:
         model = CompanyHistoricalQuote
         fields = [
@@ -501,7 +529,11 @@ class StockScanSerializer(serializers.ModelSerializer):
             'ROA',
             'ROE',
             'ROIC',
-            'MarketCap'
+            'MarketCap',
+            'LastQuarterRev',
+            'LastQuarterProfit',
+            'CurrentQuarterRev',
+            'CurrentQuarterProfit'
         ]
 
 
