@@ -543,3 +543,16 @@ class DecisiveIndex(TimeStampedModel):
         ordering = ('-created', '-id',)
         verbose_name = _('DecisiveIndex')
         verbose_name_plural = _('DecisiveIndexes')
+
+
+class Latest(TimeStampedModel):
+    Stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None, related_name='stock_latest')
+    TodayCapital = models.FloatField(_('TodayCapital'), blank=True, null=True)
+    PercentChange = models.FloatField(_('PercentChange'), blank=True, null=True)
+    MarketCap = models.FloatField(_('MarketCap'), blank=True, null=True)
+    DealVolume = models.FloatField(_('DealVolume'), blank=True, null=True)
+
+    class Meta:
+        ordering = ('-created', '-id',)
+        verbose_name = _('Latest')
+        verbose_name_plural = _('Latest')
