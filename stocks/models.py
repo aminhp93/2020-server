@@ -551,6 +551,7 @@ class Latest(TimeStampedModel):
     PercentChange = models.FloatField(_('PercentChange'), blank=True, null=True)
     MarketCap = models.FloatField(_('MarketCap'), blank=True, null=True)
     DealVolume = models.FloatField(_('DealVolume'), blank=True, null=True)
+    AverageVolume30 = models.FloatField(_('AverageVolume30'), blank=True, null=True)
 
     class Meta:
         ordering = ('-created', '-id',)

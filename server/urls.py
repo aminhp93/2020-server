@@ -62,6 +62,7 @@ from stocks.views.Finance import (
 )
 from stocks.views.IntradayQuote import IntradayQuoteAPIView
 from stocks.views.Analysis import AnalysisListAPIView, StockNewsAPIView
+from stocks.views.Latest import LatestViewSet
 from stocks.views.MarketNews import (
     AllNewsApiView,
     PositiveNewsApiView,
@@ -80,6 +81,7 @@ router.register(r'api2/Stock', StockViewSet, basename='stock')
 router.register(r'api/Company', CompanyViewSet, basename='company')
 router.register(r'api/DecisiveIndex', DecisiveIndexViewSet, basename='decisiveIndex')
 router.register(r'api/LatestFinancialInfo', LatestFinancialInfoViewSet, basename='latestFinancialInfo')
+router.register(r'api/Latest', LatestViewSet, basename='latest')
 
 urlpatterns = router.urls
 

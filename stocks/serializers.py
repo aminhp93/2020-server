@@ -13,7 +13,8 @@ from stocks.models import (
     LatestFinancialInfo,
     LastestFinancialReportsName,
     LastestFinancialReportsValue,
-    DecisiveIndex
+    DecisiveIndex,
+    Latest
 )
 
 from stocks.constants import IndustryTypeListStock, IndustryTypeConstant
@@ -540,4 +541,10 @@ class StockScanSerializer(serializers.ModelSerializer):
 class DecisiveIndexSerializer(serializers.ModelSerializer):
     class Meta:
         model = DecisiveIndex
+        fields = '__all__'
+
+
+class LatestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Latest
         fields = '__all__'

@@ -20,7 +20,8 @@ from stocks.models import (
     CompanyHistoricalQuote,
     Company,
     DecisiveIndex,
-    Latest
+    Latest,
+    LatestFinancialInfo
 )
 from stocks.serializers import (
     StockSerializer,
@@ -54,23 +55,37 @@ class Command(BaseCommand):
         last_update_date = last_updated_date_instance.value
 
         list_create = []
-        for i in Stock.objects.values_list('id', flat=True):
-            ins = CompanyHistoricalQuote.objects.get(Stock_id=i, Date=last_update_date)
+        for i in Stock.objects.filter(IsStrong=True).values_list('id', flat=True):
+            xxx = CompanyHistoricalQuote.objects.filter(Stock_id=i).order_by('-Date')[:30]
 
-            today_capital = 1
-            percent_change = 1
-            market_cap = 1
-            deal_volume = 1
+            l = list(xxx.values_list('Volume', flat=True))
+            float_l = [float(x) for x in l]
+            sum_l = sum(float_l)
+            average_volume_30 = round(sum_l/30)
+            
+            yyy = LatestFinancialInfo.objects.get(Stock_id=i)
+            
+            today_capital = xxx[0].Volume * xxx[0].PriceClose
+            percent_change = round((xxx[0].PriceClose - xxx[1].PriceClose) * 100 / xxx[0].PriceClose, 2)
+            market_cap = yyy.MarketCapitalization
+            deal_volume = xxx[0].Volume
             list_create.append(Latest(
                 Stock_id=i,
                 TodayCapital=today_capital,
                 PercentChange=percent_change,
                 MarketCap=market_cap,
-                DealVolume=deal_volume
+                DealVolume=deal_volume,
+                AverageVolume30=average_volume_30
             ))
-        # [Latest(Stock_id=i) for i in Stock.objects.values_list('id', flat=True)]
+        print(len(list_create))
 
-        # print(Stock.objects.values_list('id', flat=True))
         Latest.objects.bulk_create(list_create)
         
+
+        # Get stock id 
+        # Get all price data of that stock id
+        # Filter by current year
+        # sort
+        # Get current count
+
         self.stdout.write(self.style.SUCCESS('End update latest stock'))
