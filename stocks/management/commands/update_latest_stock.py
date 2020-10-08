@@ -58,21 +58,21 @@ class Command(BaseCommand):
         for i in Stock.objects.filter(IsStrong=True).values_list('id', flat=True):
             xxx = CompanyHistoricalQuote.objects.filter(Stock_id=i).order_by('-Date')[:30]
 
-            l = list(xxx.values_list('Volume', flat=True))
+            l = list(xxx.values_list('DealVolume', flat=True))
             float_l = [float(x) for x in l]
             sum_l = sum(float_l)
             average_volume_30 = round(sum_l/30)
             
             yyy = LatestFinancialInfo.objects.get(Stock_id=i)
             
-            today_capital = xxx[0].Volume * xxx[0].PriceClose
-            percent_change = round((xxx[0].PriceClose - xxx[1].PriceClose) * 100 / xxx[0].PriceClose, 2)
+            today_capital = xxx[0].DealVolume * xxx[0].PriceClose
+            price_change = round((xxx[0].PriceClose - xxx[1].PriceClose) * 100 / xxx[0].PriceClose, 2)
             market_cap = yyy.MarketCapitalization
-            deal_volume = xxx[0].Volume
+            deal_volume = xxx[0].DealVolume
             list_create.append(Latest(
                 Stock_id=i,
                 TodayCapital=today_capital,
-                PercentChange=percent_change,
+                PriceChange=price_change,
                 MarketCap=market_cap,
                 DealVolume=deal_volume,
                 AverageVolume30=average_volume_30

@@ -53,7 +53,7 @@ class LatestViewSet(viewsets.ViewSet):
         IsOnStudy = request.data.get('IsOnStudy', False)
 
         queryset = Latest.objects.filter(
-            Q(PercentChange__gt=ChangePrice)\
+            Q(PriceChange__gt=ChangePrice)\
             & Q(TodayCapital__gt=TodayCapital)
         )
 

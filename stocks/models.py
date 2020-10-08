@@ -548,7 +548,7 @@ class DecisiveIndex(TimeStampedModel):
 class Latest(TimeStampedModel):
     Stock = models.ForeignKey(Stock, on_delete=models.CASCADE, default=None, related_name='stock_latest')
     TodayCapital = models.FloatField(_('TodayCapital'), blank=True, null=True)
-    PercentChange = models.FloatField(_('PercentChange'), blank=True, null=True)
+    PriceChange = models.FloatField(_('PriceChange'), blank=True, null=True)
     MarketCap = models.FloatField(_('MarketCap'), blank=True, null=True)
     DealVolume = models.FloatField(_('DealVolume'), blank=True, null=True)
     AverageVolume30 = models.FloatField(_('AverageVolume30'), blank=True, null=True)
