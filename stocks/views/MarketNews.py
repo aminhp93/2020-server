@@ -124,3 +124,30 @@ class NewsInGroupApiView(APIView):
             return Response({}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(data)
+
+class CompanyNewsApiView(APIView):
+    def get(self, request, *args, **kwargs):
+        startIndex = request.GET.get('startIndex')
+        count = request.GET.get('count')
+        symbol = request.GET.get('symbol')
+
+        url = 'https://svr4.fireant.vn/api/Data/News/CompanyNews'
+
+        querystring = {
+            "startIndex": startIndex,
+            "count": count,
+            "symbol": symbol
+        }
+
+        headers = {
+            'cache-control': 'no-cache'
+        }
+        
+        response = requests.request("GET", url, headers=headers, params=querystring)
+
+        data = response.json()
+
+        if not data or response.status_code != 200:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(data)

@@ -67,7 +67,8 @@ from stocks.views.MarketNews import (
     AllNewsApiView,
     PositiveNewsApiView,
     NegativeNewsApiView,
-    NewsInGroupApiView
+    NewsInGroupApiView,
+    CompanyNewsApiView
 )
 
 from notes.views import NoteViewSet
@@ -132,6 +133,7 @@ urlpatterns = router.urls + [
     path('api/Data/News/PositiveNews', PositiveNewsApiView.as_view()),
     path('api/Data/News/NegativeNews', NegativeNewsApiView.as_view()),
     path('api/Data/News/NewsInGroup', NewsInGroupApiView.as_view()),
+    path('api/Data/News/CompanyNews', CompanyNewsApiView.as_view()),
     # 
 
     # path('api/Data/Companies/HistoricalQuotes/', HistoricalQuoteAPIView.as_view()),

@@ -56,9 +56,9 @@ class Command(BaseCommand):
 
         list_create = []
         for i in Stock.objects.filter(IsStrong=True).values_list('id', flat=True):
-            xxx = CompanyHistoricalQuote.objects.filter(Stock_id=i).order_by('-Date')[:30]
+            xxx = CompanyHistoricalQuote.objects.filter(Stock_id=i).order_by('-Date')[:31]
 
-            l = list(xxx.values_list('DealVolume', flat=True))
+            l = list(xxx[1:31].values_list('DealVolume', flat=True))
             float_l = [float(x) for x in l]
             sum_l = sum(float_l)
             average_volume_30 = round(sum_l/30)
