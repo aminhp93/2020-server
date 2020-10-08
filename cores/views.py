@@ -9,6 +9,7 @@ from rest_framework.generics import (
 
 from rest_framework.response import Response
 from rest_framework import status
+from django.core.management import call_command
 
 
 from .serializers import ConfigSerialzier
@@ -42,6 +43,10 @@ class ConfigRetrieveAPIView(RetrieveAPIView):
 class ConfigUpdateAPIView(UpdateAPIView):
     serializer_class = ConfigSerialzier
     queryset = Config.objects.all()
+
+    def perform_update(self, serialzier):
+        serialzier.save()
+        call_command('update_latest_stock')        
 
 
 class ConfigDestroyAPIView(DestroyAPIView):
