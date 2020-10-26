@@ -138,7 +138,10 @@ class LastestFinancialReportsSerializer(serializers.ModelSerializer):
                     & Q(Type=type)
                     & Q(ID=obj.ID) 
                     & (
-                        (Q(Year=2020) & Q(Quarter=1))
+                        (Q(Year=2020) & Q(Quarter=4))
+                        | (Q(Year=2020) & Q(Quarter=3))
+                        | (Q(Year=2020) & Q(Quarter=2))
+                        | (Q(Year=2020) & Q(Quarter=1))
                         | (Q(Year=2019) & Q(Quarter=4))
                         | (Q(Year=2019) & Q(Quarter=3))
                         | (Q(Year=2019) & Q(Quarter=2))
