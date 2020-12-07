@@ -55,14 +55,14 @@ def get_industry_type(symbol):
     return IndustryTypeConstant.DEFAULT
 
 
-class LatestFinancialInfoRetrieveAPIView(RetrieveAPIView):
-    def get(self, request, *args, **kwargs):
-        StockId = request.GET.get('stockId')
-        result = LatestFinancialInfo.objects.filter(Stock_id=StockId)
-        if result.count() != 1:
-            return Response(None, status=status.HTTP_404_NOT_FOUND)
-        serializer = LatestFinancialInfoSerializer(result[0])
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+# class LatestFinancialInfoRetrieveAPIView(RetrieveAPIView):
+#     def get(self, request, *args, **kwargs):
+#         StockId = request.GET.get('stockId')
+#         result = LatestFinancialInfo.objects.filter(Stock_id=StockId)
+#         if result.count() != 1:
+#             return Response(None, status=status.HTTP_404_NOT_FOUND)
+#         serializer = LatestFinancialInfoSerializer(result[0])
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class LatestFinancialInfoViewSet(viewsets.ViewSet):

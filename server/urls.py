@@ -46,7 +46,7 @@ from stocks.views.company import (
 )
 from stocks.views.HistoricalQuote import HistoricalQuoteAPIView
 from stocks.views.Finance import (
-    LatestFinancialInfoRetrieveAPIView,
+    # LatestFinancialInfoRetrieveAPIView,
     LatestFinancialInfoViewSet,
     LatestFinancialInfoUpdateAPIView,
     LatestFinancialInfoFilterAPIView,
@@ -110,7 +110,7 @@ urlpatterns = router.urls + [
     path('api/Data/Companies/HistoricalQuotes/', CompanyHistoricalQuoteRetrieveAPIView.as_view()),
     path('api/Data/Companies/HistoricalQuotes/update/', CompanyHistoricalQuoteUpdateAPIView.as_view()),
     # 
-    path('api/Data/Finance/LastestFinancialInfo/', LatestFinancialInfoRetrieveAPIView.as_view()),
+    # path('api/Data/Finance/LastestFinancialInfo/', LatestFinancialInfoRetrieveAPIView.as_view()),
     path('api/Data/Finance/LastestFinancialInfo/update/', LatestFinancialInfoUpdateAPIView.as_view()),
     path('api/Data/Finance/LastestFinancialInfo/filter/', LatestFinancialInfoFilterAPIView.as_view()),
     path('api/Data/Finance/YearlyFinancialInfo/', YearlyFinancialInfoRetrieveAPIView.as_view()),
