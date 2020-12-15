@@ -19,7 +19,6 @@ from stocks.models import (
 )
 from stocks.serializers import (
     StockSerializer,
-    StockScanSerializer,
     CompanyHistoricalQuoteSerializer,
     DecisiveIndexSerializer
 )
@@ -157,33 +156,41 @@ class StockScanAPIView(APIView):
                 filteredStocks = filteredStocks.filter(stock_company__ICBCode=ICBCode)
 
         
-        companyHistoricalQuote = CompanyHistoricalQuote.objects\
+        endData = CompanyHistoricalQuote.objects\
             .filter(Stock_id__in=[i.id for i in filteredStocks])\
             .filter(Date=EndDate)\
             .filter(PriceClose__gt=MinPrice)\
             .annotate(TodayCapital=F('PriceClose') * F('DealVolume'))\
             .filter(TodayCapital__gt=TodayCapital)
+        
+        startData = CompanyHistoricalQuote.objects\
+            .filter(Stock_id__in=[i.id for i in filteredStocks])\
+            .filter(Date=StartDate)\
+            .filter(PriceClose__gt=MinPrice)\
+            .annotate(TodayCapital=F('PriceClose') * F('DealVolume'))\
+            .filter(TodayCapital__gt=TodayCapital)
      
-        if ChangePrice and not Symbol:
-            dic1 = CompanyHistoricalQuote.objects\
-                .filter(Stock_id__in=[i.Stock_id for i in companyHistoricalQuote])\
-                .filter(Date=EndDate)
+        # if ChangePrice and not Symbol:
+        #     dic1 = CompanyHistoricalQuote.objects\
+        #         .filter(Stock_id__in=[i.Stock_id for i in companyHistoricalQuote])\
+        #         .filter(Date=EndDate)
 
-            dic2 = CompanyHistoricalQuote.objects\
-                .filter(Stock_id__in=[i.Stock_id for i in companyHistoricalQuote])\
-                .filter(Date=StartDate)
+        #     dic2 = CompanyHistoricalQuote.objects\
+        #         .filter(Stock_id__in=[i.Stock_id for i in companyHistoricalQuote])\
+        #         .filter(Date=StartDate)
             
-            result = []
-            for i in dic1:
-                start = dic2.filter(Stock_id=i.Stock_id)
-                if len(start) == 1:
-                    if (i.PriceClose - start[0].PriceClose)/ start[0].PriceClose * 100 > ChangePrice:
-                        result.append(i.Stock_id)
-            companyHistoricalQuote = companyHistoricalQuote.filter(Stock_id__in=[i for i in result])
+        #     result = []
+        #     for i in dic1:
+        #         start = dic2.filter(Stock_id=i.Stock_id)
+        #         if len(start) == 1:
+        #             if (i.PriceClose - start[0].PriceClose)/ start[0].PriceClose * 100 > ChangePrice:
+        #                 result.append(i.Stock_id)
+        #     companyHistoricalQuote = companyHistoricalQuote.filter(Stock_id__in=[i for i in result])
 
-        serializer = StockScanSerializer(companyHistoricalQuote, context={'StartDate': StartDate, 'Analysis': True}, many=True)
+        startSerializer = CompanyHistoricalQuoteSerializer(startData, context={}, many=True)
+        endSerializer = CompanyHistoricalQuoteSerializer(endData, context={}, many=True)
 
-        return Response(serializer.data)
+        return Response({ 'startData': startSerializer.data, 'endData': endSerializer.data })
 
 
 class DecisiveIndexViewSet(viewsets.ViewSet):

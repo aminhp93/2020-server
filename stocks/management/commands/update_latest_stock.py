@@ -25,7 +25,6 @@ from stocks.models import (
 )
 from stocks.serializers import (
     StockSerializer,
-    StockScanSerializer,
     CompanyHistoricalQuoteSerializer,
     DecisiveIndexSerializer
 )
