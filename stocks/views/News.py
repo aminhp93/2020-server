@@ -14,23 +14,6 @@ from rest_framework.generics import (
 from rest_framework.response import Response
 from rest_framework import status
 
-from stocks.serializers import (
-    CompanyHistoricalQuoteSerializer
-)
-from stocks.models import (
-    CompanyHistoricalQuote
-)
-
-
-class AnalysisListAPIView(ListAPIView):
-    def get(self, request, *args, **kwargs):
-        Date = request.GET.get('Date')
-        data = CompanyHistoricalQuote.objects.filter(Date=Date)
-        serializer = CompanyHistoricalQuoteSerializer(data, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 class StockNewsAPIView(ListAPIView):
     def get(self, request, *args, **kwargs):
         headers = {

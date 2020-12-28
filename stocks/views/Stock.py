@@ -104,7 +104,6 @@ class StockViewSet(viewsets.ViewSet):
 
 
 class StockScanAPIView(APIView):
-    # filterset_class = StockFilter
 
     def post(self, request, *args, **kwargs):
         today = datetime.today().strftime('%Y-%m-%d') + 'T00:00:00Z'
@@ -169,23 +168,6 @@ class StockScanAPIView(APIView):
             .filter(PriceClose__gt=MinPrice)\
             .annotate(TodayCapital=F('PriceClose') * F('DealVolume'))\
             .filter(TodayCapital__gt=TodayCapital)
-     
-        # if ChangePrice and not Symbol:
-        #     dic1 = CompanyHistoricalQuote.objects\
-        #         .filter(Stock_id__in=[i.Stock_id for i in companyHistoricalQuote])\
-        #         .filter(Date=EndDate)
-
-        #     dic2 = CompanyHistoricalQuote.objects\
-        #         .filter(Stock_id__in=[i.Stock_id for i in companyHistoricalQuote])\
-        #         .filter(Date=StartDate)
-            
-        #     result = []
-        #     for i in dic1:
-        #         start = dic2.filter(Stock_id=i.Stock_id)
-        #         if len(start) == 1:
-        #             if (i.PriceClose - start[0].PriceClose)/ start[0].PriceClose * 100 > ChangePrice:
-        #                 result.append(i.Stock_id)
-        #     companyHistoricalQuote = companyHistoricalQuote.filter(Stock_id__in=[i for i in result])
 
         startSerializer = CompanyHistoricalQuoteSerializer(startData, context={}, many=True)
         endSerializer = CompanyHistoricalQuoteSerializer(endData, context={}, many=True)

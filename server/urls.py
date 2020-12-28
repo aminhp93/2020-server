@@ -44,7 +44,6 @@ from stocks.views.company import (
     CompanyHistoricalQuoteRetrieveAPIView,
     CompanyHistoricalQuoteUpdateAPIView
 )
-from stocks.views.HistoricalQuote import HistoricalQuoteAPIView
 from stocks.views.Finance import (
     # LatestFinancialInfoRetrieveAPIView,
     LatestFinancialInfoViewSet,
@@ -60,8 +59,7 @@ from stocks.views.Finance import (
     LastestFinancialReportsNameUpdateAPIView,
     LastestFinancialReportsValueUpdateAPIView,
 )
-from stocks.views.IntradayQuote import IntradayQuoteAPIView
-from stocks.views.Analysis import AnalysisListAPIView, StockNewsAPIView
+from stocks.views.News import StockNewsAPIView
 from stocks.views.Latest import LatestViewSet
 from stocks.views.MarketNews import (
     AllNewsApiView,
@@ -91,14 +89,10 @@ urlpatterns = router.urls + [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
     path('api/config/', ConfigListAPIView.as_view()),
-    # path('api/config/', ConfigCreateAPIView.as_view()),
-    # path('api/config/', ConfigRetrieveAPIView.as_view()),
     path('api/config/<int:pk>/', ConfigUpdateAPIView.as_view()),
-    # path('api/config/<int:pk>/', ConfigDestroyAPIView.as_view()),
     # 
     path('api/Data/Markets/TradingStatistic/', StockAPIView.as_view()),
     # 
-    # path('api/Data/Companies/CompanyInfo/', CompanyListAPIView.as_view()),
     path('api/Data/Companies/CompanyInfo/update/', CompanyUpdateAPIView.as_view()),
     path('api/Data/Companies/CompanyInfo/filter/', CompanyInfoFilterAPIView.as_view()),
     path('api/Data/Companies/SubCompanies/', SubCompanyAPIView.as_view()),
@@ -110,7 +104,6 @@ urlpatterns = router.urls + [
     path('api/Data/Companies/HistoricalQuotes/', CompanyHistoricalQuoteRetrieveAPIView.as_view()),
     path('api/Data/Companies/HistoricalQuotes/update/', CompanyHistoricalQuoteUpdateAPIView.as_view()),
     # 
-    # path('api/Data/Finance/LastestFinancialInfo/', LatestFinancialInfoRetrieveAPIView.as_view()),
     path('api/Data/Finance/LastestFinancialInfo/update/', LatestFinancialInfoUpdateAPIView.as_view()),
     path('api/Data/Finance/LastestFinancialInfo/filter/', LatestFinancialInfoFilterAPIView.as_view()),
     path('api/Data/Finance/YearlyFinancialInfo/', YearlyFinancialInfoRetrieveAPIView.as_view()),
@@ -124,7 +117,6 @@ urlpatterns = router.urls + [
     path('api/Data/Finance/LastestFinancialReportsValue/update/', LastestFinancialReportsValueUpdateAPIView.as_view()),
     # 
 
-    path('api/Analysis/', AnalysisListAPIView.as_view()),
     path('api/Stock/Filter/', StockFilterAPIView.as_view()),
     path('api/Stock/scan/', StockScanAPIView.as_view()),
     path('api/Stock/News/', StockNewsAPIView.as_view()),
@@ -136,9 +128,6 @@ urlpatterns = router.urls + [
     path('api/Data/News/CompanyNews', CompanyNewsApiView.as_view()),
     # 
 
-    # path('api/Data/Companies/HistoricalQuotes/', HistoricalQuoteAPIView.as_view()),
-    # path('api/Data/Companies/CompanyInfo/', IntradayQuoteAPIView.as_view()),
-    # url(r'^api-auth/', include('rest_framework.urls'))
 ]
 
 
